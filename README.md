@@ -56,18 +56,20 @@ The app automatically detects if the Python backend is available and will displa
 ## 📁 Project Structure
 
 ```
-├── index.html              # Homepage
+├── index.html              # Homepage with game download modal
 ├── games/
-│   ├── index.html         # Games listing
-│   ├── cookie-clicker/    # Cookie Clicker game
-│   ├── slope/             # Slope game
-│   ├── super-mario-64/    # Super Mario 64
-│   └── minecraft/         # Eaglercraft
+│   ├── index.html         # Games listing page
+│   ├── cookie-clicker/    # Cookie Clicker game (downloaded on-demand)
+│   ├── crossyroad/        # Crossy Road (downloaded on-demand)
+│   ├── slope/             # Slope game (downloaded on-demand)
+│   ├── super-mario-64/    # Super Mario 64 (downloaded on-demand)
+│   └── minecraft/         # Eaglercraft (downloaded on-demand)
 ├── settings/
 │   └── index.html         # Settings page
+├── icons/                 # Game icon images
 ├── assets/
-│   └── style.css          # Global styles
-└── server.py              # Development server
+│   └── style.css          # Global styles with theme system
+└── server.py              # Python HTTP server with download API
 
 ```
 

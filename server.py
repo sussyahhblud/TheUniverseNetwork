@@ -22,9 +22,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
     
     def do_POST(self):
-        if self.path == '/api/download-images':
-            self.handle_download_images()
-        elif self.path == '/api/download-games':
+        if self.path == '/api/download-games':
             self.handle_download_games()
         elif self.path == '/api/ping':
             self.handle_ping()
@@ -131,73 +129,6 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
         except Exception as e:
             print(f"Error during game download: {str(e)}")
-            error_response = {
-                'success': False,
-                'error': str(e)
-            }
-            
-            self.send_response(500)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps(error_response).encode())
-    
-    def handle_download_images(self):
-        try:
-            imglist_path = os.path.join(DIRECTORY, 'games/cookie-clicker/img/_imglist.txt')
-            img_dir = os.path.join(DIRECTORY, 'games/cookie-clicker/img')
-            
-            os.makedirs(img_dir, exist_ok=True)
-            
-            with open(imglist_path, 'r') as f:
-                urls = [line.strip() for line in f if line.strip()]
-            
-            total = len(urls)
-            downloaded = 0
-            errors = []
-            
-            for url in urls:
-                if not url:
-                    continue
-                    
-                filename = os.path.basename(urlparse(url).path)
-                filepath = os.path.join(img_dir, filename)
-                
-                if os.path.exists(filepath):
-                    downloaded += 1
-                    continue
-                
-                try:
-                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-                    req = urllib.request.Request(url, headers=headers)
-                    
-                    with urllib.request.urlopen(req, timeout=10) as response:
-                        with open(filepath, 'wb') as out_file:
-                            out_file.write(response.read())
-                    
-                    downloaded += 1
-                    print(f"Downloaded: {filename} ({downloaded}/{total})")
-                    
-                except Exception as e:
-                    error_msg = f"Failed to download {filename}: {str(e)}"
-                    errors.append(error_msg)
-                    print(error_msg)
-            
-            all_successful = (downloaded == total and len(errors) == 0)
-            
-            response_data = {
-                'success': all_successful,
-                'total': total,
-                'downloaded': downloaded,
-                'errors': errors
-            }
-            
-            status_code = 200 if all_successful else 500
-            self.send_response(status_code)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode())
-            
-        except Exception as e:
             error_response = {
                 'success': False,
                 'error': str(e)

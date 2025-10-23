@@ -40,9 +40,11 @@ Fill in these settings:
 | **Environment** | `Python 3` |
 | **Region** | Choose closest to your users |
 | **Branch** | `main` (or your default branch) |
-| **Build Command** | Leave empty (no build needed) |
+| **Build Command** | Leave empty or `pip install -r requirements.txt` |
 | **Start Command** | `python3 server.py` |
 | **Instance Type** | `Free` (or paid if you prefer) |
+
+**Note:** The `requirements.txt` file is included but empty (no external dependencies needed). The server uses only Python's built-in standard library.
 
 ### Step 5: Deploy
 1. Click **Create Web Service**
@@ -94,9 +96,20 @@ If you prefer to keep static hosting, you would need to:
 
 If you encounter any issues during deployment:
 1. Check that `server.py` is in your repository root
-2. Verify the Start Command is exactly: `python3 server.py`
-3. Ensure Environment is set to "Python 3"
-4. Check deployment logs in Render dashboard
+2. Check that `requirements.txt` is in your repository root
+3. Verify the Start Command is exactly: `python3 server.py`
+4. Ensure Environment is set to "Python 3"
+5. Check deployment logs in Render dashboard
+
+### Common Issues
+
+**Error: "Could not open requirements file"**
+- ✅ Fixed! The `requirements.txt` file has been added to the repository
+- This file is required by Render even though we don't need external packages
+
+**Error: "Module not found"**
+- All required modules are built into Python 3 (no pip installs needed)
+- Make sure Render is using Python 3.8 or higher
 
 ---
 

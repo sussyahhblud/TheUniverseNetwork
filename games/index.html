@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - The Universe Network</title>
+    <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">UN</a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/games/" class="active">Games</a></li>
+                <li><a href="/settings/">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="page-header">
+            <h1 class="page-title">Games</h1>
+        </div>
+
+        <div class="games-grid">
+            <a href="/games/cookie-clicker/" class="game-card">
+                <img src="/icons/unnamed_1761182690950.png" alt="Cookie Clicker" class="game-logo">
+                <h2 class="game-title">Cookie Clicker</h2>
+            </a>
+
+            <a href="/games/crossyroad/" class="game-card">
+                <img src="/icons/unnamed (1)_1761182690949.png" alt="Crossy Road" class="game-logo">
+                <h2 class="game-title">Crossy Road</h2>
+            </a>
+
+            <a href="/games/minecraft/" class="game-card">
+                <img src="/icons/minecraft-1639513933156_1761182690949.webp" alt="Minecraft" class="game-logo">
+                <h2 class="game-title">Minecraft</h2>
+            </a>
+
+            <a href="/games/slope/" class="game-card">
+                <img src="/icons/slope-logo-1-f309x309_1761182690950.webp" alt="Slope" class="game-logo">
+                <h2 class="game-title">Slope</h2>
+            </a>
+
+            <a href="/games/super-mario-64/" class="game-card">
+                <img src="/icons/5276953_1761182690950.png" alt="Super Mario 64" class="game-logo">
+                <h2 class="game-title">Super Mario 64</h2>
+            </a>
+        </div>
+    </main>
+    
+    <script>
+        // Load saved theme
+        const savedTheme = localStorage.getItem('un-theme') || 'classic';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>

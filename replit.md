@@ -10,9 +10,13 @@ The Universe Network is a gaming portal featuring multiple browser games. It's a
   - Deployment configured for autoscale
   - .gitignore created with Python and temporary file exclusions
   - Games are downloaded on-demand via the frontend interface using the backend API
-  - **Game icons updated** to use actual images from icons folder instead of emojis
+  - **Game icons updated** to use actual images from icons folder instead of emojis (both home page modal and games listing page)
   - **Improved error messaging** for static hosting with step-by-step Render deployment instructions
   - Created RENDER_DEPLOYMENT_GUIDE.md with complete migration instructions
+  - Added requirements.txt file (empty, but required by Render's Python environment)
+  - **Created games/index.html** - Games listing page with all 5 games displayed with proper icons
+  - **Removed Cookie Clicker download popup** - No longer needed since all game files are downloaded via main download system
+  - Removed /api/download-images endpoint from server.py
 
 ## Project Structure
 - `index.html` - Homepage with UN logo
@@ -91,11 +95,7 @@ The button automatically fades in when your mouse moves near the top-right corne
 - Save games stored in localStorage
 - **All ads removed** (Google AdSense, Facebook Pixel, cookie consent, etc.)
 - Clean gaming experience with no tracking or advertisements
-- **Smart Download System**: Click the Cookie Clicker card to show a popup that downloads all 310+ PNG images from the original source on-demand
-  - Theme-aware popup modal matching the website aesthetic
-  - Progress tracking with detailed error reporting
-  - Automatic redirect to game after successful download
-  - Backend API endpoint at `/api/download-images`
+- **Download System**: All game files including images are downloaded as part of the main game download process (no separate popup needed)
 
 ## Crossy Road
 - Source: https://github.com/tw31122007/HTML-Games-V2
