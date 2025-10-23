@@ -1,0 +1,12 @@
+# The Universe Network - Python Dependencies
+# 
+# This project uses only Python's built-in standard library modules:
+# - http.server (HTTP server)
+# - socketserver (TCP server)
+# - urllib.request (URL downloads)
+# - json (JSON handling)
+# - zipfile (ZIP extraction)
+# - shutil (file operations)
+# - os (operating system interface)
+#
+# No external packages are required!
