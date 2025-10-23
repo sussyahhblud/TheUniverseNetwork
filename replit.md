@@ -32,6 +32,12 @@ The workflow runs `python3 server.py` which:
 ## Deployment
 Configured for autoscale deployment using the same Python HTTP server.
 
+**For Render.com deployment:**
+- Use **Web Service** (not Static Site) to enable game downloads
+- Set Start Command: `python3 server.py`
+- Set Environment: Python 3
+- The app includes a backend detection system that automatically checks if the Python server is available
+
 ## Features
 - Clean black-themed navigation across all pages
 - Homepage with bold "UN" logo and "The Universe Network" title

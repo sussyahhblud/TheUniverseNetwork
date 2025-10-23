@@ -39,12 +39,19 @@ Then visit `http://localhost:5000`
 
 ### Deploy to Render
 
+**Important**: Deploy as a **Web Service** (not Static Site) to enable the game download feature.
+
 1. Fork this repository
 2. Go to [render.com](https://render.com)
-3. Create new **Static Site**
+3. Create new **Web Service**
 4. Connect your GitHub repo
-5. Set **Publish Directory** to `.`
+5. Set:
+   - **Build Command**: (leave empty)
+   - **Start Command**: `python3 server.py`
+   - **Environment**: Python 3
 6. Deploy!
+
+The app automatically detects if the Python backend is available and will display deployment instructions if backend is not found.
 
 ## 📁 Project Structure
 

@@ -26,8 +26,18 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_download_images()
         elif self.path == '/api/download-games':
             self.handle_download_games()
+        elif self.path == '/api/ping':
+            self.handle_ping()
         else:
             self.send_error(404, "Endpoint not found")
+    
+    def handle_ping(self):
+        """Simple ping endpoint to check if backend is available"""
+        response_data = {'status': 'ok', 'backend': 'available'}
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(response_data).encode())
     
     def handle_download_games(self):
         """Download and extract UniverseGames.zip from Dropbox"""
