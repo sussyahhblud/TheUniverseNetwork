@@ -29,7 +29,7 @@
         <div class="game-modal-backdrop"></div>
         <div class="game-modal-content">
             <div class="game-modal-header">
-                <div class="game-modal-icon">🎮</div>
+                <div class="game-modal-icon-logo">UN</div>
                 <h2 class="game-modal-title">Welcome to The Universe Network</h2>
                 <p class="game-modal-subtitle">Experience the best browser games</p>
             </div>
@@ -140,7 +140,9 @@
             border-radius: 32px;
             padding: 3.5rem;
             max-width: 650px;
+            max-height: 90vh;
             width: 92%;
+            overflow-y: auto;
             box-shadow: 
                 0 30px 100px rgba(0, 0, 0, 0.5),
                 0 0 100px var(--accent-glow),
@@ -181,6 +183,17 @@
             margin-bottom: 1.5rem;
             animation: pulse 2.5s ease-in-out infinite;
             filter: drop-shadow(0 0 20px var(--accent-glow));
+        }
+
+        .game-modal-icon-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            letter-spacing: 8px;
+            animation: pulse 2.5s ease-in-out infinite;
+            text-shadow: 0 0 40px var(--accent-glow);
         }
 
         .game-modal-title {
@@ -420,17 +433,29 @@
         const savedTheme = localStorage.getItem('un-theme') || 'classic';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Check if games are downloaded
-        const gamesDownloaded = localStorage.getItem('un-games-downloaded') === 'true';
+        // Check if games are installed by checking the server
+        async function checkGamesInstalled() {
+            try {
+                const response = await fetch('/api/check-games');
+                const result = await response.json();
+                return result.installed;
+            } catch (error) {
+                console.error('Error checking games:', error);
+                // If can't check, assume not installed
+                return false;
+            }
+        }
         
-        if (!gamesDownloaded) {
-            // Show the modal on page load
-            window.addEventListener('load', () => {
+        // Show modal if games not installed
+        window.addEventListener('load', async () => {
+            const gamesInstalled = await checkGamesInstalled();
+            
+            if (!gamesInstalled) {
                 setTimeout(() => {
                     document.getElementById('game-download-modal').classList.add('show');
                 }, 500);
-            });
-        }
+            }
+        });
 
         // Download button handler - Client-side version using JSZip
         document.getElementById('download-games-btn').addEventListener('click', async function() {
@@ -496,6 +521,9 @@
                     progressBar.style.width = '100%';
                     progressText.textContent = '✓ All games successfully installed!';
                     progressText.style.color = '#4CAF50';
+                    
+                    // Wait a bit to show the success message
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 } else {
                     // No backend - static hosting detected
                     progressBar.style.width = '0%';
@@ -519,9 +547,6 @@
                     // Don't mark as success
                     throw new Error('Static hosting - backend required');
                 }
-
-                // Mark as downloaded
-                localStorage.setItem('un-games-downloaded', 'true');
 
                 // Update UI to show success
                 setTimeout(() => {

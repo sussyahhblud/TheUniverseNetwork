@@ -21,6 +21,13 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Expires', '0')
         super().end_headers()
     
+    def do_GET(self):
+        if self.path == '/api/check-games':
+            self.handle_check_games()
+        else:
+            # Default GET handler for static files
+            return super().do_GET()
+    
     def do_POST(self):
         if self.path == '/api/download-games':
             self.handle_download_games()
@@ -28,6 +35,42 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_ping()
         else:
             self.send_error(404, "Endpoint not found")
+    
+    def handle_check_games(self):
+        """Check if games are installed by checking if game folders exist"""
+        games_to_check = [
+            'cookie-clicker',
+            'crossyroad',
+            'minecraft',
+            'slope',
+            'super-mario-64'
+        ]
+        
+        games_dir = os.path.join(DIRECTORY, 'games')
+        installed_games = []
+        missing_games = []
+        
+        for game in games_to_check:
+            game_path = os.path.join(games_dir, game)
+            if os.path.exists(game_path) and os.path.isdir(game_path):
+                installed_games.append(game)
+            else:
+                missing_games.append(game)
+        
+        all_installed = len(missing_games) == 0
+        
+        response_data = {
+            'installed': all_installed,
+            'installed_games': installed_games,
+            'missing_games': missing_games,
+            'total': len(games_to_check),
+            'installed_count': len(installed_games)
+        }
+        
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(response_data).encode())
     
     def handle_ping(self):
         """Simple ping endpoint to check if backend is available"""
@@ -43,7 +86,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             print("Starting game download process...")
             
             # Dropbox URL
-            dropbox_url = "https://www.dropbox.com/scl/fi/p41cyeuga930y626tvhbu/UniverseGames.zip?rlkey=5vppcp6oa2j3gb1q7mrtx8unv&st=16gk0u48&dl=1"
+            dropbox_url = "https://www.dropbox.com/scl/fi/iy4lpgkafq9kmqwvcvu51/UniverseGames.zip?rlkey=8o4p1r84g70igmpojk1dnttqa&st=1mx7dcga&dl=1"
             
             # Download the zip file
             print("Downloading UniverseGames.zip...")
@@ -67,11 +110,25 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
             # Path to individual game zips
             games_dir = os.path.join(DIRECTORY, 'games')
-            source_dir = os.path.join(temp_extract, 'UniverseGames/games/games')
+            
+            # Find the directory containing the game zips by walking the tree
+            print(f"Searching for game zips in {temp_extract}...")
+            source_dir = None
+            
+            for root, dirs, files in os.walk(temp_extract):
+                # Look for directory containing .zip files
+                zip_files = [f for f in files if f.endswith('.zip')]
+                if zip_files:
+                    print(f"Found {len(zip_files)} game zips in: {root}")
+                    print(f"  Game files: {zip_files}")
+                    source_dir = root
+                    break
+            
+            if not source_dir:
+                raise Exception("Could not find game zip files in downloaded archive")
             
             # Game zips to extract
             game_zips = [
-                'index.html',
                 'cookie-clicker.zip',
                 'crossyroad.zip',
                 'minecraft.zip',
@@ -84,29 +141,28 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if os.path.exists(zip_path):
                     print(f"Extracting {game_zip}...")
                     
-                    if game_zip == 'index.zip':
-                        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                            zip_ref.extractall(games_dir)
+                    game_name = game_zip.replace('.zip', '')
+                    game_path = os.path.join(games_dir, game_name)
+                    
+                    # Remove existing folder if it exists
+                    if os.path.exists(game_path):
+                        shutil.rmtree(game_path)
+                    
+                    # Extract to temp location
+                    temp_game_path = os.path.join(games_dir, f'_temp_{game_name}')
+                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(temp_game_path)
+                    
+                    # Check if there's a nested folder
+                    nested_path = os.path.join(temp_game_path, game_name)
+                    if os.path.exists(nested_path):
+                        shutil.move(nested_path, game_path)
+                        shutil.rmtree(temp_game_path)
                     else:
-                        game_name = game_zip.replace('.zip', '')
-                        game_path = os.path.join(games_dir, game_name)
-                        
-                        # Remove existing folder if it exists
-                        if os.path.exists(game_path):
-                            shutil.rmtree(game_path)
-                        
-                        # Extract to temp location
-                        temp_game_path = os.path.join(games_dir, f'_temp_{game_name}')
-                        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                            zip_ref.extractall(temp_game_path)
-                        
-                        # Check if there's a nested folder
-                        nested_path = os.path.join(temp_game_path, game_name)
-                        if os.path.exists(nested_path):
-                            shutil.move(nested_path, game_path)
-                            shutil.rmtree(temp_game_path)
-                        else:
-                            shutil.move(temp_game_path, game_path)
+                        shutil.move(temp_game_path, game_path)
+                    print(f"  ✓ {game_name} extracted successfully")
+                else:
+                    print(f"  ✗ {game_zip} not found at {zip_path}")
             
             # Clean up temp files
             print("Cleaning up temporary files...")

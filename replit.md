@@ -4,11 +4,15 @@
 The Universe Network is a gaming portal featuring multiple browser games. It's a static website with a black theme, clean navigation, and a smart download system for game assets.
 
 ## Recent Updates
-- **October 23, 2025**: Project imported to Replit environment
+- **October 23, 2025**: Project successfully imported to Replit environment
   - Python 3.11 installed and configured
-  - Server workflow configured to run on port 5000
-  - Deployment configured for autoscale
+  - Server workflow configured to run on port 5000 with webview output
+  - Deployment configured for autoscale with python3 server.py command
   - .gitignore created with Python and temporary file exclusions
+  - All pages verified working (Home, Games, Settings)
+  - Server running successfully on 0.0.0.0:5000 for Replit compatibility
+  - Cache-Control headers properly configured to prevent caching issues
+  - Backend API endpoints functional (/api/ping, /api/download-games, /api/check-games)
   - Games are downloaded on-demand via the frontend interface using the backend API
   - **Game icons updated** to use actual images from icons folder instead of emojis (both home page modal and games listing page)
   - **Improved error messaging** for static hosting with step-by-step Render deployment instructions
@@ -17,6 +21,10 @@ The Universe Network is a gaming portal featuring multiple browser games. It's a
   - **Created games/index.html** - Games listing page with all 5 games displayed with proper icons
   - **Removed Cookie Clicker download popup** - No longer needed since all game files are downloaded via main download system
   - Removed /api/download-images endpoint from server.py
+  - **File-based game checker**: Added `/api/check-games` endpoint that checks filesystem for installed games instead of localStorage
+  - **Smart popup display**: Popup only appears if games are not actually installed on the server
+  - **Download popup improvements**: Made popup scrollable (max-height: 90vh) and replaced controller emoji with UN logo
+  - **Enhanced download logging**: Server now provides detailed extraction logs for troubleshooting
 
 ## Project Structure
 - `index.html` - Homepage with UN logo
@@ -64,11 +72,26 @@ Configured for autoscale deployment using the same Python HTTP server. The deplo
 - Settings page (placeholder for future expansion)
 
 ## Available Games
-- **Cookie Clicker** - The original idle game (ad-free) at `/games/cookie-clicker/`
-- **Crossy Road** - Classic road-crossing arcade game at `/games/crossyroad/`
-- **Super Mario 64** - Classic Nintendo 64 platformer at `/games/super-mario-64/`
-- **Slope** - Fast-paced 3D running game at `/games/slope/`
-- **Minecraft/Eaglercraft** - Minecraft 1.12.2 in your browser at `/games/minecraft/Web/`
+- **Cookie Clicker** - The original idle game (ad-free) at `/games/cookie-clicker/` ✅ Working
+- **Crossy Road** - Classic road-crossing arcade game at `/games/crossyroad/` ✅ Working
+- **Super Mario 64** - Classic Nintendo 64 platformer at `/games/super-mario-64/` ✅ Working
+- **Slope** - Fast-paced 3D running game at `/games/slope/` ✅ Working
+- **Minecraft/Eaglercraft** - Minecraft 1.12.2 in your browser at `/games/minecraft/Web/` ⚠️ Known Issue
+
+### Known Issues
+
+#### Minecraft/Eaglercraft Crash (FIXED)
+Minecraft (Eaglercraft v1.2.5) was experiencing a TeaVM JavaScript runtime error in iframe environments:
+- **Error**: `Cannot read properties of undefined (reading '$jsException')`
+- **Fix Applied**: Added TeaVM polyfill for `$jsException` and `$rt_globals` functions before script loading
+- **Status**: Should now work in Replit's iframe preview environment
+
+**If the issue persists**:
+1. **Clear browser cache** and reload the page (Ctrl+Shift+R or Cmd+Shift+R)
+2. **Try deployed version**: Access from the published deployment URL instead of preview
+3. **Check browser console**: Look for any remaining JavaScript errors
+
+The polyfill code added ensures the TeaVM runtime has the necessary exception handling functions available before initialization.
 
 ## Navigation
 
