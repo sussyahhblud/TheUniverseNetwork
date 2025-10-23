@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - The Universe Network</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        .setting-item {
+            background: linear-gradient(145deg, var(--bg-tertiary), var(--bg-secondary));
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .setting-item:hover {
+            border-color: var(--text-primary);
+            transform: translateX(5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .setting-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+        
+        .setting-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .setting-button {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            padding: 0.85rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        
+        .setting-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+        
+        .setting-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        
+        .theme-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .theme-button:hover {
+            border-color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-button.active {
+            border-color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+        
+        .theme-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+        
+        .classic-preview {
+            background: linear-gradient(135deg, #000000 50%, #ffffff 50%);
+        }
+        
+        .midnight-preview {
+            background: linear-gradient(135deg, #0a1929 50%, #e3f2fd 50%);
+        }
+        
+        .charcoal-preview {
+            background: linear-gradient(135deg, #2a2a2a 50%, #e0e0e0 50%);
+        }
+        
+        .light-preview {
+            background: linear-gradient(135deg, #ffffff 50%, #000000 50%);
+        }
+        
+        .space-preview {
+            background: linear-gradient(135deg, #0d1b2a 50%, #7dd3fc 50%);
+        }
+
+        .page-title {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">UN</a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/games/">Games</a></li>
+                <li><a href="/settings/" class="active">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <h1 class="page-title">Settings</h1>
+        <div class="settings-content">
+            <div class="setting-item">
+                <div class="setting-title">Theme</div>
+                <div class="setting-description">
+                    Choose your preferred color theme for The Universe Network. Your selection will be saved automatically.
+                </div>
+                <div class="theme-options">
+                    <button class="theme-button" data-theme="classic" onclick="setTheme('classic')">
+                        <span class="theme-preview classic-preview"></span>
+                        Classic
+                    </button>
+                    <button class="theme-button" data-theme="midnight" onclick="setTheme('midnight')">
+                        <span class="theme-preview midnight-preview"></span>
+                        Midnight Blue
+                    </button>
+                    <button class="theme-button" data-theme="charcoal" onclick="setTheme('charcoal')">
+                        <span class="theme-preview charcoal-preview"></span>
+                        Charcoal
+                    </button>
+                    <button class="theme-button" data-theme="light" onclick="setTheme('light')">
+                        <span class="theme-preview light-preview"></span>
+                        Inverted
+                    </button>
+                    <button class="theme-button" data-theme="space" onclick="setTheme('space')">
+                        <span class="theme-preview space-preview"></span>
+                        Deep Space
+                    </button>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-title">About:Blank Mode</div>
+                <div class="setting-description">
+                    Open The Universe Network in a disguised tab. The browser will show "about:blank" 
+                    in the address bar and tab title, making it appear as an empty page while the site 
+                    remains fully functional.
+                </div>
+                <button class="setting-button" onclick="openAboutBlank()">Launch About:Blank</button>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('un-theme') || 'classic';
+            applyTheme(savedTheme);
+            
+            const activeButton = document.querySelector(`[data-theme="${savedTheme}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+        
+        function setTheme(themeName) {
+            localStorage.setItem('un-theme', themeName);
+            applyTheme(themeName);
+            
+            document.querySelectorAll('.theme-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeButton = document.querySelector(`[data-theme="${themeName}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+        
+        function applyTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+        }
+        
+        function openAboutBlank() {
+            const win = window.open();
+            const currentUrl = window.location.origin;
+            
+            win.document.body.style.margin = '0';
+            win.document.body.style.height = '100vh';
+            
+            const iframe = win.document.createElement('iframe');
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.margin = '0';
+            iframe.style.padding = '0';
+            iframe.src = currentUrl;
+            
+            win.document.body.appendChild(iframe);
+        }
+        
+        loadTheme();
+    </script>
+</body>
+</html>
