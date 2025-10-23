@@ -4,7 +4,15 @@
 The Universe Network is a gaming portal featuring multiple browser games. It's a static website with a black theme, clean navigation, and a smart download system for game assets.
 
 ## Recent Updates
-- **October 23, 2025**: All game files have been extracted from UniverseGames.zip (downloaded from Dropbox) and are now fully integrated into the games folder. All games are now available and functional.
+- **October 23, 2025**: Project imported to Replit environment
+  - Python 3.11 installed and configured
+  - Server workflow configured to run on port 5000
+  - Deployment configured for autoscale
+  - .gitignore created with Python and temporary file exclusions
+  - Games are downloaded on-demand via the frontend interface using the backend API
+  - **Game icons updated** to use actual images from icons folder instead of emojis
+  - **Improved error messaging** for static hosting with step-by-step Render deployment instructions
+  - Created RENDER_DEPLOYMENT_GUIDE.md with complete migration instructions
 
 ## Project Structure
 - `index.html` - Homepage with UN logo
@@ -30,9 +38,15 @@ The workflow runs `python3 server.py` which:
 - Includes cache-control headers to prevent caching issues
 
 ## Deployment
-Configured for autoscale deployment using the same Python HTTP server.
+Configured for autoscale deployment using the same Python HTTP server. The deployment runs `python3 server.py` which serves the application and provides API endpoints for game downloads.
 
-**For Render.com deployment:**
+**Replit Deployment:**
+- Deployment target: autoscale (stateless web service)
+- Run command: `python3 server.py`
+- Port: 5000
+- Host: 0.0.0.0 (configured for Replit environment)
+
+**Alternative deployment (Render.com):**
 - Use **Web Service** (not Static Site) to enable game downloads
 - Set Start Command: `python3 server.py`
 - Set Environment: Python 3

@@ -38,23 +38,23 @@
                 <p class="status-message">Download and install all games to get started. This will only take a moment.</p>
                 <div class="game-list">
                     <div class="game-item">
-                        <span class="game-emoji">🍪</span>
+                        <img src="icons/unnamed_1761182690950.png" alt="Cookie Clicker" class="game-icon">
                         <span>Cookie Clicker</span>
                     </div>
                     <div class="game-item">
-                        <span class="game-emoji">🐔</span>
+                        <img src="icons/unnamed (1)_1761182690949.png" alt="Crossy Road" class="game-icon">
                         <span>Crossy Road</span>
                     </div>
                     <div class="game-item">
-                        <span class="game-emoji">⛏️</span>
+                        <img src="icons/minecraft-1639513933156_1761182690949.webp" alt="Minecraft" class="game-icon">
                         <span>Minecraft</span>
                     </div>
                     <div class="game-item">
-                        <span class="game-emoji">🎢</span>
+                        <img src="icons/slope-logo-1-f309x309_1761182690950.webp" alt="Slope" class="game-icon">
                         <span>Slope</span>
                     </div>
                     <div class="game-item">
-                        <span class="game-emoji">🍄</span>
+                        <img src="icons/5276953_1761182690950.png" alt="Super Mario 64" class="game-icon">
                         <span>Super Mario 64</span>
                     </div>
                 </div>
@@ -251,6 +251,14 @@
 
         .game-emoji {
             font-size: 2rem;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .game-icon {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 8px;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
         }
 
@@ -491,16 +499,21 @@
                 } else {
                     // No backend - static hosting detected
                     progressBar.style.width = '0%';
-                    progressBar.style.background = 'linear-gradient(90deg, #ff9800, #ffa726)';
+                    progressBar.style.background = 'linear-gradient(90deg, #2196F3, #64B5F6)';
                     progressText.innerHTML = `
-                        ⚠️ <strong>Static Hosting Detected</strong><br>
-                        <small style="margin-top: 8px; display: block;">
-                        This site is hosted on static hosting. To enable games, deploy as a <strong>Web Service</strong> on Render with:<br>
-                        • Start Command: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">python3 server.py</code><br>
-                        • Environment: Python 3
+                        <strong style="font-size: 1.1rem;">⚙️ Backend Required</strong><br>
+                        <small style="margin-top: 12px; display: block; line-height: 1.6;">
+                        To enable game downloads, please redeploy on Render as a <strong>Web Service</strong>:<br><br>
+                        <strong>Step 1:</strong> Go to your Render dashboard<br>
+                        <strong>Step 2:</strong> Delete the current static site<br>
+                        <strong>Step 3:</strong> Create a new <strong>Web Service</strong><br>
+                        <strong>Step 4:</strong> Set <strong>Start Command</strong> to: <code style="background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; font-family: monospace;">python3 server.py</code><br>
+                        <strong>Step 5:</strong> Set <strong>Environment</strong> to: Python 3<br><br>
+                        Once deployed as a Web Service, the games will download automatically! 🎮
                         </small>
                     `;
-                    progressText.style.color = '#ff9800';
+                    progressText.style.color = '#2196F3';
+                    progressText.style.fontSize = '0.95rem';
                     downloadBtn.disabled = false;
                     
                     // Don't mark as success
