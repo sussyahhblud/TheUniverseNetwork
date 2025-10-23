@@ -43,7 +43,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             print("Starting game download process...")
             
             # Dropbox URL
-            dropbox_url = "https://www.dropbox.com/scl/fi/zqa64ofwfwy1tz0111vbo/UniverseGames.zip?rlkey=ro2wm7h08gnmhqkhtkp4n173s&st=tl46gfqy&dl=1"
+            dropbox_url = "https://www.dropbox.com/scl/fi/p41cyeuga930y626tvhbu/UniverseGames.zip?rlkey=5vppcp6oa2j3gb1q7mrtx8unv&st=16gk0u48&dl=1"
             
             # Download the zip file
             print("Downloading UniverseGames.zip...")
@@ -71,7 +71,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             
             # Game zips to extract
             game_zips = [
-                'index.zip',
+                'index.html',
                 'cookie-clicker.zip',
                 'crossyroad.zip',
                 'minecraft.zip',
