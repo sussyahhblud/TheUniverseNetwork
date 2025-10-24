@@ -39,8 +39,11 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def handle_check_games(self):
         """Check if games are installed by checking if game folders exist"""
         games_to_check = [
+            '1v1lol',
             'cookie-clicker',
             'crossyroad',
+            'drive-mad',
+            'flappy-bird',
             'minecraft',
             'slope',
             'super-mario-64'
@@ -86,7 +89,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             print("Starting game download process...")
             
             # Dropbox URL
-            dropbox_url = "https://www.dropbox.com/scl/fi/iy4lpgkafq9kmqwvcvu51/UniverseGames.zip?rlkey=8o4p1r84g70igmpojk1dnttqa&st=1mx7dcga&dl=1"
+            dropbox_url = "https://www.dropbox.com/scl/fi/f9v44998tqzbxa1mhy7mu/UniverseGames.zip?rlkey=fk46acc5hem7o7z8rs9xha9md&st=qqanr4m3&dl=1"
             
             # Download the zip file
             print("Downloading UniverseGames.zip...")
@@ -127,14 +130,14 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             if not source_dir:
                 raise Exception("Could not find game zip files in downloaded archive")
             
-            # Game zips to extract
-            game_zips = [
-                'cookie-clicker.zip',
-                'crossyroad.zip',
-                'minecraft.zip',
-                'slope.zip',
-                'super-mario-64.zip'
-            ]
+            # Get all game zips in the directory (dynamic extraction)
+            all_files = os.listdir(source_dir)
+            game_zips = [f for f in all_files if f.endswith('.zip')]
+            
+            if not game_zips:
+                raise Exception("No game zip files found in the downloaded archive")
+            
+            print(f"Found {len(game_zips)} games to extract: {game_zips}")
             
             for game_zip in game_zips:
                 zip_path = os.path.join(source_dir, game_zip)
