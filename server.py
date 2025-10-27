@@ -84,17 +84,17 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(json.dumps(response_data).encode())
     
     def handle_download_games(self):
-        """Download and extract UniverseGames.zip from Dropbox"""
+        """Download and extract games from Dropbox folder directly to games directory"""
         try:
             print("Starting game download process...")
             
-            # Dropbox URL
-            dropbox_url = "https://www.dropbox.com/scl/fi/5z1l88vtsv45vfpi5ix5u/UniverseGames.zip?rlkey=t3lt7vux2bm9ueole15p3i6ae&st=y47z7hv6&dl=1"
+            # Dropbox folder URL - change dl=0 to dl=1 for direct download
+            dropbox_url = "https://www.dropbox.com/scl/fo/1t9ufkx1n9gn3tikrt14d/AOUmORjtRogE8lMt7HDkhlY?rlkey=4vcl644pzp7yyokzc8jieklee&st=jbcb6vdr&dl=1"
             
             # Download the zip file
-            print("Downloading UniverseGames.zip...")
-            temp_zip = '/tmp/UniverseGames.zip'
-            temp_extract = '/tmp/UniverseGames'
+            print("Downloading games from Dropbox...")
+            temp_zip = '/tmp/games_download.zip'
+            temp_extract = '/tmp/games_extract'
             
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
             req = urllib.request.Request(dropbox_url, headers=headers)
@@ -103,69 +103,62 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 with open(temp_zip, 'wb') as out_file:
                     out_file.write(response.read())
             
-            print("Download complete. Extracting main zip...")
+            print("Download complete. Extracting files...")
             
-            # Extract the main zip
+            # Extract the zip to temp directory
             with zipfile.ZipFile(temp_zip, 'r') as zip_ref:
                 zip_ref.extractall(temp_extract)
             
-            print("Main zip extracted. Processing game zips...")
+            print("Extraction complete. Moving files to games folder...")
             
-            # Path to individual game zips
+            # Path to games directory
             games_dir = os.path.join(DIRECTORY, 'games')
             
-            # Find the directory containing the game zips by walking the tree
-            print(f"Searching for game zips in {temp_extract}...")
-            source_dir = None
-            
+            # Find the extracted content (Dropbox creates a folder with the share name)
+            # Walk through the temp extract to find all folders and files
+            extracted_items = []
             for root, dirs, files in os.walk(temp_extract):
-                # Look for directory containing .zip files
-                zip_files = [f for f in files if f.endswith('.zip')]
-                if zip_files:
-                    print(f"Found {len(zip_files)} game zips in: {root}")
-                    print(f"  Game files: {zip_files}")
-                    source_dir = root
+                # Get the relative path from temp_extract
+                rel_path = os.path.relpath(root, temp_extract)
+                
+                # Skip the root level if it's just a wrapper folder
+                if rel_path == '.':
+                    # Copy all immediate subdirectories and files
+                    for item in dirs + files:
+                        src = os.path.join(root, item)
+                        extracted_items.append((item, src))
                     break
             
-            if not source_dir:
-                raise Exception("Could not find game zip files in downloaded archive")
+            # If no items at root, look one level deeper (Dropbox folder wrapper)
+            if not extracted_items:
+                first_level = os.listdir(temp_extract)
+                if len(first_level) == 1 and os.path.isdir(os.path.join(temp_extract, first_level[0])):
+                    # There's a single wrapper folder
+                    wrapper_dir = os.path.join(temp_extract, first_level[0])
+                    for item in os.listdir(wrapper_dir):
+                        src = os.path.join(wrapper_dir, item)
+                        extracted_items.append((item, src))
             
-            # Get all game zips in the directory (dynamic extraction)
-            all_files = os.listdir(source_dir)
-            game_zips = [f for f in all_files if f.endswith('.zip')]
+            print(f"Found {len(extracted_items)} items to move to games folder")
             
-            if not game_zips:
-                raise Exception("No game zip files found in the downloaded archive")
-            
-            print(f"Found {len(game_zips)} games to extract: {game_zips}")
-            
-            for game_zip in game_zips:
-                zip_path = os.path.join(source_dir, game_zip)
-                if os.path.exists(zip_path):
-                    print(f"Extracting {game_zip}...")
-                    
-                    game_name = game_zip.replace('.zip', '')
-                    game_path = os.path.join(games_dir, game_name)
-                    
-                    # Remove existing folder if it exists
-                    if os.path.exists(game_path):
-                        shutil.rmtree(game_path)
-                    
-                    # Extract to temp location
-                    temp_game_path = os.path.join(games_dir, f'_temp_{game_name}')
-                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                        zip_ref.extractall(temp_game_path)
-                    
-                    # Check if there's a nested folder
-                    nested_path = os.path.join(temp_game_path, game_name)
-                    if os.path.exists(nested_path):
-                        shutil.move(nested_path, game_path)
-                        shutil.rmtree(temp_game_path)
+            # Copy all items directly to games folder
+            for item_name, src_path in extracted_items:
+                dest_path = os.path.join(games_dir, item_name)
+                
+                # Remove existing item if it exists
+                if os.path.exists(dest_path):
+                    if os.path.isdir(dest_path):
+                        shutil.rmtree(dest_path)
                     else:
-                        shutil.move(temp_game_path, game_path)
-                    print(f"  ✓ {game_name} extracted successfully")
+                        os.remove(dest_path)
+                
+                # Copy to games directory
+                if os.path.isdir(src_path):
+                    shutil.copytree(src_path, dest_path)
+                    print(f"  ✓ Copied folder: {item_name}")
                 else:
-                    print(f"  ✗ {game_zip} not found at {zip_path}")
+                    shutil.copy2(src_path, dest_path)
+                    print(f"  ✓ Copied file: {item_name}")
             
             # Clean up temp files
             print("Cleaning up temporary files...")

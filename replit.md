@@ -4,11 +4,24 @@
 The Universe Network is a gaming portal featuring multiple browser games. It's a static website with a black theme, clean navigation, and a smart download system for game assets.
 
 ## Recent Updates
+- **October 27, 2025** (Latest): Updated Download System and Emulator UI
+  - **Updated Dropbox link** to new folder URL: `https://www.dropbox.com/scl/fo/1t9ufkx1n9gn3tikrt14d/...`
+  - **Simplified download process**: Files are now extracted directly into the `games/` folder without nested zip handling
+  - **Fixed emulator page centering**: UN logo and instructions now properly centered in empty state
+  - Download button extracts all folders/files from Dropbox directly to games folder (no zip nesting)
+- **October 27, 2025**: Added EMULATOR page with EmulatorJS integration
+  - Created new `/emulator/` page featuring EmulatorJS for retro game emulation
+  - Supports 25+ gaming systems (NES, SNES, N64, Game Boy, PlayStation, Sega, Atari, and more)
+  - Users can upload their own ROM files and play games directly in the browser
+  - Updated navigation on all pages (Home, Games, Settings) to include EMULATOR tab
+  - Integrated EmulatorJS CDN for stable, reliable emulation
+  - Clean, themed interface matching Universe Network design
+  - Features system selection dropdown, ROM file upload, and fullscreen gameplay
 - **October 24, 2025**: Fresh GitHub import successfully set up in Replit environment
   - Python 3.11 installed and configured
   - Server workflow configured to run on port 5000 with webview output
   - Deployment configured for autoscale with python3 server.py command
-  - .gitignore created with Python and temporary file exclusions
+  - .gitignore created with Python and temporary file exclusions (including dynamic game downloads)
   - All pages verified working (Home, Games, Settings)
   - Server running successfully on 0.0.0.0:5000 for Replit compatibility
   - Cache-Control headers properly configured to prevent caching issues
@@ -18,7 +31,7 @@ The Universe Network is a gaming portal featuring multiple browser games. It's a
   - **Improved error messaging** for static hosting with step-by-step Render deployment instructions
   - Created RENDER_DEPLOYMENT_GUIDE.md with complete migration instructions
   - Added requirements.txt file (empty, but required by Render's Python environment)
-  - **Created games/index.html** - Games listing page with all 5 games displayed with proper icons
+  - **Created games/index.html** - Games listing page with all 8 games displayed with proper icons
   - **Removed Cookie Clicker download popup** - No longer needed since all game files are downloaded via main download system
   - Removed /api/download-images endpoint from server.py
   - **File-based game checker**: Added `/api/check-games` endpoint that checks filesystem for installed games instead of localStorage
@@ -26,10 +39,12 @@ The Universe Network is a gaming portal featuring multiple browser games. It's a
   - **Download popup improvements**: Made popup scrollable (max-height: 90vh) and replaced controller emoji with UN logo
   - **Enhanced download logging**: Server now provides detailed extraction logs for troubleshooting
   - **Themed in-game dropdowns** - All 8 game pages now have fully themed dropdown navigation that adapts to the selected theme (classic, midnight, charcoal, light, space)
+  - Project successfully imported and configured for Replit deployment
 
 ## Project Structure
 - `index.html` - Homepage with UN logo
 - `games/index.html` - Games listing page
+- `emulator/index.html` - Retro game emulator page (EmulatorJS)
 - `settings/index.html` - Settings page
 - `assets/style.css` - Shared stylesheet for Universe Network theme
 - `server.py` - Simple Python HTTP server for serving static files
@@ -160,6 +175,33 @@ All games have been compressed to stay under 25MB:
 ### Minecraft/Eaglercraft (20MB - down from 22MB)
 - Removed source map file (classes.js.map) which isn't needed for production
 
+## Emulator (EmulatorJS)
+The Universe Network now includes a powerful retro game emulator powered by EmulatorJS. This feature allows users to play classic games from various gaming systems directly in their browser.
+
+### Features
+- **25+ Gaming Systems Supported**: Including NES, SNES, N64, Game Boy (GB/GBC/GBA), Nintendo DS, Sega (Genesis, Master System, Game Gear, CD, 32X, Saturn), PlayStation 1, Atari systems, and more
+- **Browser-Based**: Runs entirely in the browser using WebAssembly technology
+- **ROM File Upload**: Users can select and upload their own legally-owned ROM files
+- **Save States**: Game progress is saved locally in the browser
+- **Keyboard & Gamepad Support**: Default keyboard controls or connect your own gamepad
+- **Clean Interface**: Matches the Universe Network theme and design system
+
+### Supported Systems
+**Nintendo**: NES, SNES, N64, Game Boy, Game Boy Color, Game Boy Advance, Nintendo DS  
+**Sega**: Genesis/Mega Drive, Master System, Game Gear, Sega CD, 32X, Saturn  
+**Sony**: PlayStation 1  
+**Atari**: 2600, 5200, 7800, Lynx, Jaguar  
+**Other**: Arcade (MAME), 3DO, TurboGrafx-16/PC Engine, Neo Geo Pocket, MSX, Virtual Boy
+
+### Technical Details
+- Uses EmulatorJS CDN (stable version): `https://cdn.emulatorjs.org/stable/data/`
+- Based on RetroArch's libretro cores
+- All emulation happens client-side (no server processing required)
+- BIOS files may be required for some systems (PS1, Sega CD, Saturn)
+
+### Legal Notice
+Users should only upload ROM files they legally own. The Universe Network does not provide or distribute ROM files.
+
 ## Theme System
 The site includes 5 customizable themes saved to localStorage:
 1. **Classic** (Default) - Pure black background with white text
@@ -168,4 +210,4 @@ The site includes 5 customizable themes saved to localStorage:
 4. **Pure White** - Inverted theme with white background and black text
 5. **Deep Space** - Dark blue-black with cyan blue highlights
 
-Themes persist across all pages (Home, Games, Settings) using CSS variables and JavaScript.
+Themes persist across all pages (Home, Games, Emulator, Settings) using CSS variables and JavaScript.

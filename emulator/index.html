@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emulator - The Universe Network</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        .emulator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            letter-spacing: 5px;
+            text-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .controls-section {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group select,
+        .control-group input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .control-group select:hover,
+        .control-group input[type="file"]:hover {
+            border-color: var(--text-primary);
+        }
+
+        .control-group select:focus,
+        .control-group input[type="file"]:focus {
+            outline: none;
+            border-color: var(--text-primary);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .control-group option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .load-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.5);
+        }
+
+        .load-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(76, 175, 80, 0.7);
+        }
+
+        .load-button:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .load-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .emulator-screen {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        #game {
+            width: 100%;
+            height: 600px;
+            display: none;
+        }
+
+        .empty-state {
+            width: 100%;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state-icon {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            letter-spacing: 8px;
+            text-shadow: 0 0 40px var(--accent-glow);
+            opacity: 0.7;
+        }
+
+        .empty-state-text {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        .info-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .info-section h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-section p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-section ul {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-left: 1.5rem;
+        }
+
+        .supported-cores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .core-item {
+            background: var(--bg-secondary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2.5rem;
+                letter-spacing: 3px;
+            }
+
+            .emulator-screen {
+                min-height: 400px;
+            }
+
+            #game {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">UN</a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/games/">Games</a></li>
+                <li><a href="/emulator/" class="active">Emulator</a></li>
+                <li><a href="/settings/">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main class="emulator-container">
+        <div class="page-header">
+            <h1 class="page-title">Emulator</h1>
+            <p class="page-subtitle">Play your favorite retro games in the browser</p>
+        </div>
+
+        <div class="controls-section">
+            <div class="control-group">
+                <label for="coreSelect">Select Console:</label>
+                <select id="coreSelect">
+                    <optgroup label="Nintendo">
+                        <option value="nes">NES (Nintendo Entertainment System)</option>
+                        <option value="snes">SNES (Super Nintendo)</option>
+                        <option value="n64">Nintendo 64</option>
+                        <option value="gb">Game Boy</option>
+                        <option value="gbc">Game Boy Color</option>
+                        <option value="gba" selected>Game Boy Advance</option>
+                        <option value="nds">Nintendo DS</option>
+                    </optgroup>
+                    <optgroup label="Sega">
+                        <option value="segaMD">Sega Genesis / Mega Drive</option>
+                        <option value="segaMS">Sega Master System</option>
+                        <option value="segaGG">Sega Game Gear</option>
+                        <option value="segaCD">Sega CD</option>
+                        <option value="sega32x">Sega 32X</option>
+                        <option value="segaSaturn">Sega Saturn</option>
+                    </optgroup>
+                    <optgroup label="Sony">
+                        <option value="psx">PlayStation 1</option>
+                    </optgroup>
+                    <optgroup label="Atari">
+                        <option value="atari2600">Atari 2600</option>
+                        <option value="atari5200">Atari 5200</option>
+                        <option value="atari7800">Atari 7800</option>
+                        <option value="lynx">Atari Lynx</option>
+                        <option value="jaguar">Atari Jaguar</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                        <option value="arcade">Arcade (MAME)</option>
+                        <option value="3do">3DO</option>
+                        <option value="pce">TurboGrafx-16 / PC Engine</option>
+                        <option value="ngp">Neo Geo Pocket</option>
+                        <option value="msx">MSX</option>
+                        <option value="vb">Virtual Boy</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="romInput">Select ROM File:</label>
+                <input type="file" id="romInput" accept=".nes,.snes,.sfc,.n64,.z64,.gb,.gbc,.gba,.nds,.bin,.gen,.md,.sms,.gg,.cue,.iso,.zip">
+            </div>
+
+            <button class="load-button" onclick="startGame()">
+                🎮 Load and Play Game
+            </button>
+        </div>
+
+        <div class="emulator-screen" id="emulatorScreen">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">UN</div>
+                <div class="empty-state-text">
+                    Select a console and ROM file above, then click "Load and Play Game"<br>
+                    to start playing!
+                </div>
+            </div>
+            <div id="game"></div>
+        </div>
+
+        <div class="info-section">
+            <h3>ℹ️ How to Use</h3>
+            <p><strong>Step 1:</strong> Select the console/system you want to emulate from the dropdown menu</p>
+            <p><strong>Step 2:</strong> Click "Select ROM File" and choose your game ROM file from your computer</p>
+            <p><strong>Step 3:</strong> Click "Load and Play Game" to start playing!</p>
+            <p><strong>Controls:</strong> Use your keyboard or connect a gamepad. Default keyboard controls are typically Arrow Keys (D-Pad), Z/X (A/B), Enter (Start), Shift (Select)</p>
+            
+            <h3 style="margin-top: 2rem;">⚠️ Important Notes</h3>
+            <ul>
+                <li>Only use ROM files that you legally own</li>
+                <li>Some systems (PlayStation, Sega CD, Saturn) may require BIOS files</li>
+                <li>Your game saves are stored locally in your browser</li>
+                <li>For best performance, use modern browsers (Chrome, Firefox, Edge)</li>
+            </ul>
+        </div>
+    </main>
+    
+    <script>
+        const savedTheme = localStorage.getItem('un-theme') || 'classic';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        let gameLoaded = false;
+
+        function startGame() {
+            const core = document.getElementById('coreSelect').value;
+            const romFile = document.getElementById('romInput').files[0];
+            
+            if (!romFile) {
+                alert('Please select a ROM file first');
+                return;
+            }
+            
+            const romUrl = URL.createObjectURL(romFile);
+            
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            
+            if (gameLoaded) {
+                document.getElementById('game').innerHTML = '';
+            }
+            
+            window.EJS_player = "#game";
+            window.EJS_core = core;
+            window.EJS_gameUrl = romUrl;
+            window.EJS_gameName = romFile.name;
+            window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
+            window.EJS_startOnLoaded = true;
+            
+            if (!gameLoaded) {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+                document.body.appendChild(script);
+                gameLoaded = true;
+            } else {
+                if (window.EJS_reload) {
+                    window.EJS_reload();
+                } else {
+                    location.reload();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
