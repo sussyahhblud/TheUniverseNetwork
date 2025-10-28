@@ -1,89 +1,38 @@
-<h1 align="center">Scramjet</h1>
-<div align="center">
-  <img src="assets/scramjet.png" height="200" />
-</div>
+# rammerhead
 
-<div align="center">
-  <a href="https://www.npmjs.com/package/@mercuryworkshop/scramjet"><img src="https://img.shields.io/npm/v/@mercuryworkshop/scramjet.svg?maxAge=3600" alt="npm version" /></a>
-  <img src="https://img.shields.io/github/issues/MercuryWorkshop/scramjet?style=flat&color=orange" />
-  <img src="https://img.shields.io/github/stars/MercuryWorkshop/scramjet?style=flat&color=orange" />
-</div>
+> proxy based on testcafe-hammerhead (password is `sharkie4life`)
 
----
+Demo link: https://demo-opensource.rammerhead.org
 
-Scramjet is an interception-based web proxy designed to bypass arbitrary web browser restrictions, support a wide range of sites, and act as middleware for open-source projects. It prioritizes security, developer friendliness, and performance.
+Polished closed-source-for-now browser version: https://browser.rammerhead.org (more links by awesome community members in the discord server at the end of readme)
 
-## Supported Sites
 
-Scramjet has CAPTCHA support! Some of the popular websites that Scramjet supports include:
+## Supporting me and contributing
 
-- [Google](https://google.com)
-- [Twitter](https://twitter.com)
-- [Instagram](https://instagram.com)
-- [Youtube](https://youtube.com)
-- [Spotify](https://spotify.com)
-- [Discord](https://discord.com)
-- [Reddit](https://reddit.com)
-- [GeForce NOW](https://play.geforcenow.com/)
+Server infrastructure costs money and developing this project consumes a lot of my time, so I would appreciate it greatly if you become a Patreon member: https://www.patreon.com/rammerhead
 
-Ensure you are not hosting on a datacenter IP for CAPTCHAs to work reliably along with YouTube. Heavy amounts of traffic will make some sites NOT work on a single IP. Consider rotating IPs or routing through Wireguard using a project like <a href="https://github.com/whyvl/wireproxy">wireproxy</a>.
 
-An easy to deploy version of Scramjet can be found at [Scramjet-App](https://github.com/MercuryWorkshop/scramjet-app).
+## Who is this package for
 
-## Development
+Package is for those who want a fully-configurable proxy that works on many sites
 
-### Dependencies
+## Effectiveness of proxy
 
-- Recent versions of `node.js` and `pnpm`
-- `rustup`
-- `wasm-bindgen`
-- [Binaryen's `wasm-opt`](https://github.com/WebAssembly/binaryen)
-- [this `wasm-snip` fork](https://github.com/r58Playz/wasm-snip)
+This proxy supports proxying
+- basically everything except google logins
 
-#### Building
+## Features of proxy
 
-- Clone the repository with `git clone --recursive https://github.com/MercuryWorkshop/scramjet`
-- Install the dependencies with `pnpm i`
-- Build the rewriter with `pnpm rewriter:build`
-- Build Scramjet with `pnpm build`
+The proxy allows users to create a "session". When they access their session, their localStorage and cookies will be synced with rammerhead. This allows for accurately mocking cookied requests and conveniently save their logins even if they switch devices. This also enables users to configure a custom HTTP proxy server for rammerhead to connect to for the session.
 
-### Running Scramjet Locally
+## Installing and running
 
-You can run the Scramjet dev server with the command
+Rammerhead recommends you to have at least **node v16** to be installed. Once you installed nodejs, clone the repo, then run `npm install` and `npm run build`.
 
-```sh
-pnpm dev
-```
+After, configure your settings in [src/config.js](src/config.js). If you wish to consistently pull updates from this repo without the hassle of merging, create `config.js` in the root folder so they override the configs in `src/`.
 
-Scramjet should now be running at <http://localhost:1337> and should rebuild upon a file being changed (excluding the rewriter).
+Finally run the following to start rammerhead: `node src/server.js`
 
-### Setting up Typedoc
+## Discord server
 
-The official Scramjet Typedoc gets deployed via GitHub Actions along with the demo site [here](https://scramjet.mercurywork.shop/typedoc).
-
-You can run it locally with:
-
-```
-pnpm run docs
-pnpm docs:dev
-pnpm docs:serve
-```
-
-### Set up everything
-
-Do you want to run the Scramjet demo and Typedoc together like what is served on GitHub Pages by the Action?
-
-You can do this by running the serve script:
-
-```sh
-chmod +x scripts/serve-static.sh
-./scripts/serve-static.sh
-```
-
-This essentially simulates the CI pipeline, but in a shell script.
-
-## Resources
-
-- [TN Docs](https://docs.titaniumnetwork.org/proxies/scramjet) - There's a page on TN's docs for Scramjet, which is structured more like a guide if you are an interested proxy site developer.
-- [Scramjet Typedocs](https://scramjet.mercurywork.shop/typedoc) - Contains documentation for Scramjet APIs. This is useful for any proxy site developer.
-- [Scramjet-App](https://github.com/MercuryWorkshop/scramjet-app) - A simple example of a proxy site, which uses Scramjet in a mass-deployable manner. This is based on [Ultraviolet-App](https://github.com/titaniumnetwork-dev/ultraviolet-app) for familiarity.
+For any user-help non-issue related questions, especially pertaining to Rammerhead Browser, please ask them here: [Rammerhead Support Server](https://discord.gg/VNT4E7gN5Y).

@@ -12,14 +12,14 @@ The Universe Network is a static website serving as a gaming portal for multiple
 - Do not make changes to the file `Y`.
 
 ## Recent Updates
-- **October 28, 2025** (Latest): Scramjet Browser Integration
-  - **Browser Replacement**: Replaced the previous Scramjet-hosted browser with the full Scramjet proxy from https://github.com/sussyahhblud/scramjet
-  - **Node.js Setup**: Installed Node.js 20 and pnpm package manager with all 900+ dependencies
-  - **Dual-Server Architecture**: Implemented proxy system where Python server (port 5000) forwards `/browser/` requests to Node.js Scramjet server (port 3000)
-  - **Workflow Addition**: Created "Scramjet Browser" workflow running `cd browser && PORT=3000 node server.js`
-  - **Proxy Configuration**: Updated `server.py` to proxy Scramjet-related paths (`/browser`, `/scram/`, `/baremux/`, `/epoxy/`, `/libcurl/`, `/baremod/`, `/assets/`) to preserve proper headers
-  - **Git Ignore Update**: Added Node.js patterns (node_modules, pnpm files, etc.) to `.gitignore`
-  - **Fully Functional**: Scramjet browser UI loads correctly with configuration panel, though WASM placeholder limits actual proxying (as in original GitHub repo)
+- **October 28, 2025** (Latest): Rammerhead Browser Integration
+  - **Browser Replacement**: Replaced Scramjet proxy with Rammerhead from https://github.com/binary-person/rammerhead
+  - **Node.js Setup**: Installed Node.js 20 and npm dependencies (testcafe-hammerhead based)
+  - **Dual-Server Architecture**: Implemented proxy system where Python server (port 5000) forwards `/browser/` requests to Node.js Rammerhead server (port 3000)
+  - **Workflow Addition**: Created "Rammerhead Browser" workflow running `cd browser && node src/server.js`
+  - **Proxy Configuration**: Updated `server.py` to proxy `/browser` paths to Rammerhead, simplified from previous Scramjet implementation
+  - **Configuration Override**: Created `browser/config.js` to configure Rammerhead for Replit environment (port 3000, bind to 0.0.0.0, password: sharkie4life)
+  - **Fully Functional**: Rammerhead proxy interface loads with session management, URL proxying, and multi-worker support (8 workers)
 
 - **October 28, 2025**: Replit Environment Setup
   - **GitHub Import**: Successfully imported project from GitHub to Replit
@@ -42,8 +42,8 @@ The Universe Network is a static website serving as a gaming portal for multiple
 ## System Architecture
 The application uses a dual-server architecture:
 - **Main Server (Python 3.11)**: Serves the gaming portal and static files on port 5000 via `server.py`
-- **Browser Server (Node.js 20)**: Runs the Scramjet web proxy on port 3000 via `browser/server.js`
-- **Proxy Integration**: Python server forwards `/browser/` and Scramjet-related paths to the Node.js server
+- **Browser Server (Node.js 20)**: Runs the Rammerhead web proxy on port 3000 via `browser/src/server.js`
+- **Proxy Integration**: Python server forwards `/browser/` requests to the Node.js Rammerhead server
 
 The frontend uses a consistent black theme with customizable alternatives and a two-tier CSS architecture for styling.
 
@@ -58,14 +58,15 @@ The frontend uses a consistent black theme with customizable alternatives and a 
 - **Cache Control:** `Cache-Control` headers are configured to prevent caching issues.
 - **Dynamic Game Download System:** Games are downloaded on-demand via a backend API (`/api/download-games`) and extracted directly into the `games/` folder. A file-system based check (`/api/check-games`) determines if games are installed.
 - **EmulatorJS Integration:** The `/emulator/` page uses EmulatorJS (via CDN) for in-browser retro game emulation, supporting over 25 systems. It includes ROM file upload, save states, and gamepad support. `Cross-Origin-Embedder-Policy (COEP)` and `Cross-Origin-Opener-Policy (COOP)` headers are configured for `SharedArrayBuffer` support.
-- **Scramjet Proxy Integration:** The `/browser/` page runs the full Scramjet 2.0.0-alpha proxy with:
-    - Self-hosted Node.js/Fastify server on port 3000
-    - Bare server for proxy connections
-    - WISP protocol support for WebSocket connections
-    - Dreamland.js UI framework for the browser interface
-    - Multiple transport options (baremux, epoxy, libcurl, bare-as-module)
-    - Complete Scramjet codebase from sussyahhblud/scramjet repository
-    - Note: Uses placeholder WASM module (0 bytes) - full proxying requires building Rust/WASM rewriter (rustup, wasm-bindgen, wasm-opt, wasm-snip)
+- **Rammerhead Proxy Integration:** The `/browser/` page runs Rammerhead v1.2.64 with:
+    - Self-hosted Node.js server on port 3000 with load balancing (8 workers)
+    - Testcafe-hammerhead based proxy engine
+    - Session management system with localStorage and cookie syncing
+    - Password protection for creating sessions (password: "sharkie4life")
+    - Cross-domain port (3001) for isolated session handling
+    - File-based session caching with automatic cleanup
+    - Complete Rammerhead codebase from binary-person/rammerhead repository
+    - Fully functional website proxying without requiring Rust/WASM compilation
 - **Game Modifications:**
     - Cookie Clicker: Ad-free, tracking-free, and domain check bypassed for Replit iframe compatibility.
     - Crossy Road: Removed external tracking.
@@ -75,17 +76,17 @@ The frontend uses a consistent black theme with customizable alternatives and a 
 
 **System Design Choices:**
 - **Backend API:** Simple Python API for `/api/ping`, `/api/download-games`, and `/api/check-games`.
-- **Proxy Architecture**: HTTP proxy from Python to Node.js using `http.client.HTTPConnection` for Scramjet paths
+- **Proxy Architecture**: HTTP proxy from Python to Node.js using `http.client.HTTPConnection` for Rammerhead paths
 - **Deployment:** Configured for Replit autoscale deployment (`python3 server.py`) and compatible with Render.com Web Service deployments.
 - **Error Handling:** Improved error messaging for static hosting and a dedicated deployment guide (`RENDER_DEPLOYMENT_GUIDE.md`).
-- **Dependencies**: Python uses built-in stdlib only; Node.js uses 900+ packages managed by pnpm (lockfile: `browser/pnpm-lock.yaml`)
+- **Dependencies**: Python uses built-in stdlib only; Node.js uses npm packages for Rammerhead (lockfile: `browser/package-lock.json`)
 
 ## External Dependencies
 - **Dropbox:** Used as the source for game asset downloads.
 - **EmulatorJS CDN:** `https://cdn.emulatorjs.org/stable/data/` for retro game emulation.
-- **Scramjet Proxy:** Self-hosted from `browser/` directory (cloned from https://github.com/sussyahhblud/scramjet), runs on Node.js with 900+ npm packages.
+- **Rammerhead Proxy:** Self-hosted from `browser/` directory (cloned from https://github.com/binary-person/rammerhead), runs on Node.js with testcafe-hammerhead.
 - **Google Fonts:** Used for typography (configured in CSP headers for EmulatorJS).
 
 ## Workflows
 1. **Server** (Main): `python3 server.py` on port 5000 - serves the main website and proxies browser requests
-2. **Scramjet Browser**: `cd browser && PORT=3000 node server.js` on port 3000 - runs the Scramjet proxy server
+2. **Rammerhead Browser**: `cd browser && node src/server.js` on port 3000 - runs the Rammerhead proxy server with 8 workers

@@ -18,8 +18,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
     
     def end_headers(self):
-        # Skip security headers for Scramjet proxy paths - let Scramjet handle them
-        if not (self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')) or self.path == '/assets/scramjet.png'):
+        # Skip security headers for Rammerhead proxy paths - let Rammerhead handle them
+        if not self.path.startswith('/browser'):
             self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
             self.send_header('Pragma', 'no-cache')
             self.send_header('Expires', '0')
@@ -49,8 +49,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/api/check-games':
             self.handle_check_games()
-        elif self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')) or self.path == '/assets/scramjet.png':
-            self.proxy_to_scramjet()
+        elif self.path.startswith('/browser'):
+            self.proxy_to_rammerhead()
         else:
             # Default GET handler for static files
             return super().do_GET()
@@ -60,8 +60,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_download_games()
         elif self.path == '/api/ping':
             self.handle_ping()
-        elif self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')):
-            self.proxy_to_scramjet()
+        elif self.path.startswith('/browser'):
+            self.proxy_to_rammerhead()
         else:
             self.send_error(404, "Endpoint not found")
     
@@ -112,29 +112,51 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(response_data).encode())
     
-    def proxy_to_scramjet(self):
-        """Proxy requests to the Scramjet browser server"""
+    def proxy_to_rammerhead(self):
+        """Proxy requests to the Rammerhead browser server"""
         try:
-            # Only remove /browser prefix, keep all other paths as-is
-            if self.path.startswith('/browser'):
-                path = self.path.replace('/browser', '', 1) or '/'
-            else:
-                path = self.path
+            # Remove /browser prefix to get the actual path
+            path = self.path.replace('/browser', '', 1) or '/'
             
+            # Read request body if present
+            request_body = None
+            content_length = self.headers.get('Content-Length')
+            if content_length:
+                content_length = int(content_length)
+                if content_length > 0:
+                    request_body = self.rfile.read(content_length)
+            
+            # Prepare headers to forward
+            headers_to_forward = {}
+            for header, value in self.headers.items():
+                # Forward all headers except hop-by-hop headers
+                if header.lower() not in ['connection', 'proxy-connection', 'keep-alive', 
+                                          'proxy-authenticate', 'proxy-authorization', 
+                                          'te', 'trailer', 'transfer-encoding', 'upgrade']:
+                    headers_to_forward[header] = value
+            
+            # Ensure Host header is set correctly for localhost
+            headers_to_forward['Host'] = f'localhost:{BROWSER_PROXY_PORT}'
+            
+            # Make the proxied request
             conn = http.client.HTTPConnection('localhost', BROWSER_PROXY_PORT)
-            conn.request(self.command, path, headers=self.headers)
+            conn.request(self.command, path, body=request_body, headers=headers_to_forward)
             response = conn.getresponse()
             
+            # Send response status
             self.send_response(response.status)
+            
+            # Forward response headers
             for header, value in response.getheaders():
-                if header.lower() not in ['content-length', 'transfer-encoding', 'connection']:
+                if header.lower() not in ['transfer-encoding', 'connection']:
                     self.send_header(header, value)
             self.end_headers()
             
+            # Stream response body
             self.wfile.write(response.read())
             conn.close()
         except Exception as e:
-            print(f"Error proxying to Scramjet: {e}")
+            print(f"Error proxying to Rammerhead: {e}")
             self.send_error(502, f"Browser proxy error: {str(e)}")
     
     def handle_download_games(self):
