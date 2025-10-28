@@ -19,6 +19,27 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
+        
+        # Headers for EmulatorJS (enables SharedArrayBuffer)
+        # Using credentialless for better compatibility with iframes
+        self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        
+        # CSP headers to allow EmulatorJS CDN resources
+        csp_policy = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emulatorjs.org; "
+            "worker-src 'self' blob:; "
+            "child-src 'self' blob:; "
+            "style-src 'self' 'unsafe-inline' https://cdn.emulatorjs.org https://fonts.googleapis.com; "
+            "img-src 'self' data: blob: https://cdn.emulatorjs.org; "
+            "font-src 'self' data: https://cdn.emulatorjs.org https://fonts.gstatic.com; "
+            "connect-src 'self' https://cdn.emulatorjs.org blob: data:; "
+            "media-src 'self' blob: data:; "
+            "object-src 'none';"
+        )
+        self.send_header('Content-Security-Policy', csp_policy)
+        
         super().end_headers()
     
     def do_GET(self):

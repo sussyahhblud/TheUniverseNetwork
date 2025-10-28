@@ -222,6 +222,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/games/">Games</a></li>
                 <li><a href="/emulator/" class="active">Emulator</a></li>
+                <li><a href="/browser/">Browser</a></li>
                 <li><a href="/settings/">Settings</a></li>
             </ul>
         </div>
@@ -328,7 +329,10 @@
                 return;
             }
             
+            console.log('Starting game with core:', core, 'ROM:', romFile.name);
+            
             const romUrl = URL.createObjectURL(romFile);
+            console.log('Created blob URL:', romUrl);
             
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('game').style.display = 'block';
@@ -344,19 +348,48 @@
             window.EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
             window.EJS_startOnLoaded = true;
             
+            console.log('EmulatorJS config:', {
+                player: window.EJS_player,
+                core: window.EJS_core,
+                gameUrl: window.EJS_gameUrl,
+                gameName: window.EJS_gameName,
+                pathtodata: window.EJS_pathtodata
+            });
+            
             if (!gameLoaded) {
+                console.log('Loading EmulatorJS for the first time...');
                 const script = document.createElement('script');
                 script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+                script.onerror = function() {
+                    console.error('Failed to load EmulatorJS loader script');
+                    alert('Error: Failed to load emulator library. Please check your internet connection or try again later.');
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('game').style.display = 'none';
+                };
+                script.onload = function() {
+                    console.log('EmulatorJS loader script loaded successfully');
+                };
                 document.body.appendChild(script);
                 gameLoaded = true;
             } else {
-                if (window.EJS_reload) {
-                    window.EJS_reload();
+                console.log('Reloading EmulatorJS...');
+                if (window.EJS_emulator && typeof window.EJS_emulator.gameManager !== 'undefined') {
+                    console.log('Using EJS_emulator.gameManager.loadGame');
+                    window.EJS_emulator.gameManager.loadGame(core, romUrl, romFile.name);
                 } else {
+                    console.log('Reloading page to restart emulator');
                     location.reload();
                 }
             }
         }
+
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error || e.message);
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
     </script>
 </body>
 </html>

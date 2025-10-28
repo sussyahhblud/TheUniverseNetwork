@@ -4,7 +4,32 @@
 The Universe Network is a gaming portal featuring multiple browser games. It's a static website with a black theme, clean navigation, and a smart download system for game assets.
 
 ## Recent Updates
-- **October 27, 2025** (Latest): Updated Download System and Emulator UI
+- **October 28, 2025** (Latest): Added Browser Tab with Scramjet Proxy
+  - Created new `/browser/` page with web proxy functionality
+  - Integrated Scramjet proxy (https://scramjet.mercurywork.shop) for unrestricted web browsing
+  - Clean, themed interface matching Universe Network design
+  - URL input with smart formatting (auto-adds https://, detects search queries)
+  - Full-screen iframe browser with loading states
+  - Updated navigation across all pages to include "BROWSER" tab
+  - Supports YouTube, Discord, Reddit, and other major websites through Scramjet
+- **October 28, 2025**: Fixed Emulator Configuration for Replit Environment
+  - Added Cross-Origin-Embedder-Policy (COEP) and Cross-Origin-Opener-Policy (COOP) headers
+  - Configured CSP headers to allow EmulatorJS CDN resources and Google Fonts
+  - Added browser compatibility checker that detects SharedArrayBuffer support
+  - **Important**: Emulator requires deployment to work - it won't function in Replit's iframe preview
+  - Added clear user messaging explaining that emulator works on published/deployed site
+  - All security headers configured correctly for EmulatorJS (SharedArrayBuffer support)
+- **October 28, 2025** (Latest): GitHub Import Successfully Configured for Replit
+  - Python 3.11 installed and configured
+  - Server workflow configured to run on port 5000 with webview output
+  - Deployment configured for autoscale with python3 server.py command
+  - .gitignore created with Python and temporary file exclusions (including dynamic game downloads)
+  - All pages verified working (Home, Games, Emulator, Settings)
+  - Server running successfully on 0.0.0.0:5000 for Replit compatibility
+  - Cache-Control headers already properly configured to prevent caching issues
+  - Backend API endpoints confirmed functional (/api/ping, /api/download-games, /api/check-games)
+  - Project ready for deployment
+- **October 27, 2025**: Updated Download System and Emulator UI
   - **Updated Dropbox link** to new folder URL: `https://www.dropbox.com/scl/fo/1t9ufkx1n9gn3tikrt14d/...`
   - **Simplified download process**: Files are now extracted directly into the `games/` folder without nested zip handling
   - **Fixed emulator page centering**: UN logo and instructions now properly centered in empty state
@@ -45,9 +70,10 @@ The Universe Network is a gaming portal featuring multiple browser games. It's a
 - `index.html` - Homepage with UN logo
 - `games/index.html` - Games listing page
 - `emulator/index.html` - Retro game emulator page (EmulatorJS)
+- `browser/index.html` - Web browser with Scramjet proxy
 - `settings/index.html` - Settings page
 - `assets/style.css` - Shared stylesheet for Universe Network theme
-- `server.py` - Simple Python HTTP server for serving static files
+- `server.py` - Python HTTP server for serving static files and API endpoints
 - `games/cookie-clicker/` - Cookie Clicker game
   - `index.html` - Main game page
   - `main.js` - Core game logic
@@ -201,6 +227,45 @@ The Universe Network now includes a powerful retro game emulator powered by Emul
 
 ### Legal Notice
 Users should only upload ROM files they legally own. The Universe Network does not provide or distribute ROM files.
+
+## Browser (Scramjet Proxy)
+The Universe Network includes a web browser feature that uses Scramjet proxy technology to provide unrestricted web browsing.
+
+### Features
+- **Web Proxy**: Browse any website through the Scramjet proxy service
+- **Bypass Restrictions**: Access websites that may be blocked or restricted
+- **Smart URL Handling**: Automatically formats URLs and detects search queries
+- **Full-Screen Browsing**: Large iframe container for comfortable web browsing
+- **Search Integration**: Automatically redirects to Google search for queries without domain extensions
+- **Clean Interface**: Matches the Universe Network theme and design system
+
+### How It Works
+- Enter any URL (e.g., youtube.com, discord.com, reddit.com) in the search bar
+- The browser automatically adds https:// if not specified
+- Text without a domain extension is treated as a Google search query
+- Websites load through the Scramjet proxy instance at https://scramjet.mercurywork.shop
+- Supports major websites including YouTube, Discord, Reddit, Twitter, Instagram, Spotify, and more
+
+### Technical Details
+- Uses Scramjet proxy by MercuryWorkshop (https://github.com/MercuryWorkshop/scramjet)
+- Service Worker-based interception for transparent proxying
+- CAPTCHA support for major sites
+- No local backend required - uses hosted Scramjet instance
+- Accessible at `/browser/`
+
+### Supported Sites
+Scramjet supports most modern websites including:
+- **Video**: YouTube, Twitch, Vimeo
+- **Social Media**: Discord, Reddit, Twitter, Instagram
+- **Streaming**: Spotify, Netflix (limited)
+- **Gaming**: GeForce NOW, various web games
+- **General**: Most standard websites and web applications
+
+### Privacy & Security
+- All browsing goes through the Scramjet proxy service
+- No local logging or tracking
+- Session data is handled by the external Scramjet service
+- Users should be aware they're browsing through a third-party proxy
 
 ## Theme System
 The site includes 5 customizable themes saved to localStorage:
