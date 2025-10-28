@@ -1,278 +1,55 @@
-# The Universe Network - Replit Setup
+# The Universe Network
 
 ## Overview
-The Universe Network is a gaming portal featuring multiple browser games. It's a static website with a black theme, clean navigation, and a smart download system for game assets.
+The Universe Network is a static website serving as a gaming portal for multiple browser games. It features a dark-themed UI, clean navigation, and a smart download system for game assets. The project aims to provide an ad-free and distraction-free gaming experience with retro emulation and unrestricted web browsing capabilities.
+
+## User Preferences
+- I prefer simple language.
+- I want iterative development.
+- Ask before making major changes.
+- I prefer detailed explanations.
+- Do not make changes to the folder `Z`.
+- Do not make changes to the file `Y`.
 
 ## Recent Updates
-- **October 28, 2025** (Latest): Added Browser Tab with Scramjet Proxy
-  - Created new `/browser/` page with web proxy functionality
-  - Integrated Scramjet proxy (https://scramjet.mercurywork.shop) for unrestricted web browsing
-  - Clean, themed interface matching Universe Network design
-  - URL input with smart formatting (auto-adds https://, detects search queries)
-  - Full-screen iframe browser with loading states
-  - Updated navigation across all pages to include "BROWSER" tab
-  - Supports YouTube, Discord, Reddit, and other major websites through Scramjet
-- **October 28, 2025**: Fixed Emulator Configuration for Replit Environment
-  - Added Cross-Origin-Embedder-Policy (COEP) and Cross-Origin-Opener-Policy (COOP) headers
-  - Configured CSP headers to allow EmulatorJS CDN resources and Google Fonts
-  - Added browser compatibility checker that detects SharedArrayBuffer support
-  - **Important**: Emulator requires deployment to work - it won't function in Replit's iframe preview
-  - Added clear user messaging explaining that emulator works on published/deployed site
-  - All security headers configured correctly for EmulatorJS (SharedArrayBuffer support)
-- **October 28, 2025** (Latest): GitHub Import Successfully Configured for Replit
-  - Python 3.11 installed and configured
-  - Server workflow configured to run on port 5000 with webview output
-  - Deployment configured for autoscale with python3 server.py command
-  - .gitignore created with Python and temporary file exclusions (including dynamic game downloads)
-  - All pages verified working (Home, Games, Emulator, Settings)
-  - Server running successfully on 0.0.0.0:5000 for Replit compatibility
-  - Cache-Control headers already properly configured to prevent caching issues
-  - Backend API endpoints confirmed functional (/api/ping, /api/download-games, /api/check-games)
-  - Project ready for deployment
-- **October 27, 2025**: Updated Download System and Emulator UI
-  - **Updated Dropbox link** to new folder URL: `https://www.dropbox.com/scl/fo/1t9ufkx1n9gn3tikrt14d/...`
-  - **Simplified download process**: Files are now extracted directly into the `games/` folder without nested zip handling
-  - **Fixed emulator page centering**: UN logo and instructions now properly centered in empty state
-  - Download button extracts all folders/files from Dropbox directly to games folder (no zip nesting)
-- **October 27, 2025**: Added EMULATOR page with EmulatorJS integration
-  - Created new `/emulator/` page featuring EmulatorJS for retro game emulation
-  - Supports 25+ gaming systems (NES, SNES, N64, Game Boy, PlayStation, Sega, Atari, and more)
-  - Users can upload their own ROM files and play games directly in the browser
-  - Updated navigation on all pages (Home, Games, Settings) to include EMULATOR tab
-  - Integrated EmulatorJS CDN for stable, reliable emulation
-  - Clean, themed interface matching Universe Network design
-  - Features system selection dropdown, ROM file upload, and fullscreen gameplay
-- **October 24, 2025**: Fresh GitHub import successfully set up in Replit environment
-  - Python 3.11 installed and configured
-  - Server workflow configured to run on port 5000 with webview output
-  - Deployment configured for autoscale with python3 server.py command
-  - .gitignore created with Python and temporary file exclusions (including dynamic game downloads)
-  - All pages verified working (Home, Games, Settings)
-  - Server running successfully on 0.0.0.0:5000 for Replit compatibility
-  - Cache-Control headers properly configured to prevent caching issues
-  - Backend API endpoints functional (/api/ping, /api/download-games, /api/check-games)
-  - Games are downloaded on-demand via the frontend interface using the backend API
-  - **Game icons updated** to use actual images from icons folder instead of emojis (both home page modal and games listing page)
-  - **Improved error messaging** for static hosting with step-by-step Render deployment instructions
-  - Created RENDER_DEPLOYMENT_GUIDE.md with complete migration instructions
-  - Added requirements.txt file (empty, but required by Render's Python environment)
-  - **Created games/index.html** - Games listing page with all 8 games displayed with proper icons
-  - **Removed Cookie Clicker download popup** - No longer needed since all game files are downloaded via main download system
-  - Removed /api/download-images endpoint from server.py
-  - **File-based game checker**: Added `/api/check-games` endpoint that checks filesystem for installed games instead of localStorage
-  - **Smart popup display**: Popup only appears if games are not actually installed on the server
-  - **Download popup improvements**: Made popup scrollable (max-height: 90vh) and replaced controller emoji with UN logo
-  - **Enhanced download logging**: Server now provides detailed extraction logs for troubleshooting
-  - **Themed in-game dropdowns** - All 8 game pages now have fully themed dropdown navigation that adapts to the selected theme (classic, midnight, charcoal, light, space)
-  - Project successfully imported and configured for Replit deployment
+- **October 28, 2025** (Latest): Major UI and Game Updates
+  - **UN Favicon**: Created SVG favicon with "UN" logo and added to all pages (home, games, emulator, browser, settings, and all game pages)
+  - **Emulator Improvements**: Added SharedArrayBuffer detection that shows helpful deployment instructions when running in Replit's preview environment
+  - **Plants vs Zombies Added**: New game using Ruffle Flash emulator, fully playable with themed navigation dropdown
+  - **Super Mario World Added**: Informational page directing users to play SMW via the emulator (SNES system)
+  - **CSP Updates**: Updated server.py Content Security Policy to allow Ruffle CDN resources (unpkg.com and cdn.jsdelivr.net)
+  - **Game Icons**: Added PvZ and SMW icons to both the games listing page and home page modal
+  - All new games integrate seamlessly with the existing theme system
 
-## Project Structure
-- `index.html` - Homepage with UN logo
-- `games/index.html` - Games listing page
-- `emulator/index.html` - Retro game emulator page (EmulatorJS)
-- `browser/index.html` - Web browser with Scramjet proxy
-- `settings/index.html` - Settings page
-- `assets/style.css` - Shared stylesheet for Universe Network theme
-- `server.py` - Python HTTP server for serving static files and API endpoints
-- `games/cookie-clicker/` - Cookie Clicker game
-  - `index.html` - Main game page
-  - `main.js` - Core game logic
-  - `style.css` - Game styling
-  - `img/` - Game images and sprites
-  - `snd/` - Game sound effects
-  - `loc/` - Localization files
+## System Architecture
+The application is a static website served by a Python 3.11 HTTP server (`server.py`). It uses a consistent black theme with customizable alternatives and a two-tier CSS architecture for styling.
 
-## Setup
-This project uses Python 3.11's built-in HTTP server to serve static files on port 5000 with cache control headers disabled to ensure updates are visible.
+**UI/UX Decisions:**
+- **Theming System:** Five customizable themes (Classic, Midnight Blue, Charcoal, Pure White, Deep Space) persist across pages using CSS variables and JavaScript, saving preferences to `localStorage`.
+- **Navigation:** Consistent top navigation for main pages (Home, Games, Emulator, Browser, Settings). In-game, a proximity-activated, themed dropdown provides navigation without cluttering the game screen.
+- **Game Icons:** Uses actual images for game icons instead of emojis.
+- **Download Popup:** Scrollable with enhanced logging and a UN logo.
 
-## Development
-The workflow runs `python3 server.py` which:
-- Serves all static files from the current directory
-- Binds to 0.0.0.0:5000 for Replit compatibility
-- Includes cache-control headers to prevent caching issues
+**Technical Implementations & Features:**
+- **Static File Serving:** Python's built-in HTTP server serves all static files from the current directory on `0.0.0.0:5000`.
+- **Cache Control:** `Cache-Control` headers are configured to prevent caching issues.
+- **Dynamic Game Download System:** Games are downloaded on-demand via a backend API (`/api/download-games`) and extracted directly into the `games/` folder. A file-system based check (`/api/check-games`) determines if games are installed.
+- **EmulatorJS Integration:** The `/emulator/` page uses EmulatorJS (via CDN) for in-browser retro game emulation, supporting over 25 systems. It includes ROM file upload, save states, and gamepad support. `Cross-Origin-Embedder-Policy (COEP)` and `Cross-Origin-Opener-Policy (COOP)` headers are configured for `SharedArrayBuffer` support.
+- **Scramjet Proxy Integration:** The `/browser/` page integrates Scramjet proxy for unrestricted web browsing with smart URL handling and full-screen display.
+- **Game Modifications:**
+    - Cookie Clicker: Ad-free, tracking-free, and domain check bypassed for Replit iframe compatibility.
+    - Crossy Road: Removed external tracking.
+    - Slope: Replaced with a clean, ad-free version.
+    - Minecraft/Eaglercraft: Includes a TeaVM polyfill to fix iframe runtime errors.
+- **File Size Optimization:** Games are compressed by removing non-essential files (e.g., non-English localizations, source maps) and optimizing images.
 
-## Deployment
-Configured for autoscale deployment using the same Python HTTP server. The deployment runs `python3 server.py` which serves the application and provides API endpoints for game downloads.
+**System Design Choices:**
+- **Backend API:** Simple Python API for `/api/ping`, `/api/download-games`, and `/api/check-games`.
+- **Deployment:** Configured for Replit autoscale deployment (`python3 server.py`) and compatible with Render.com Web Service deployments.
+- **Error Handling:** Improved error messaging for static hosting and a dedicated deployment guide (`RENDER_DEPLOYMENT_GUIDE.md`).
 
-**Replit Deployment:**
-- Deployment target: autoscale (stateless web service)
-- Run command: `python3 server.py`
-- Port: 5000
-- Host: 0.0.0.0 (configured for Replit environment)
-
-**Alternative deployment (Render.com):**
-- Use **Web Service** (not Static Site) to enable game downloads
-- Set Start Command: `python3 server.py`
-- Set Environment: Python 3
-- The app includes a backend detection system that automatically checks if the Python server is available
-
-## Features
-- Clean black-themed navigation across all pages
-- Homepage with bold "UN" logo and "The Universe Network" title
-- Games page with clickable game cards
-- Smart download system for Cookie Clicker assets
-- Settings page (placeholder for future expansion)
-
-## Available Games
-- **Cookie Clicker** - The original idle game (ad-free) at `/games/cookie-clicker/` ✅ Working
-- **Crossy Road** - Classic road-crossing arcade game at `/games/crossyroad/` ✅ Working
-- **Super Mario 64** - Classic Nintendo 64 platformer at `/games/super-mario-64/` ✅ Working
-- **Slope** - Fast-paced 3D running game at `/games/slope/` ✅ Working
-- **Minecraft/Eaglercraft** - Minecraft 1.12.2 in your browser at `/games/minecraft/Web/` ⚠️ Known Issue
-
-### Known Issues
-
-#### Minecraft/Eaglercraft Crash (FIXED)
-Minecraft (Eaglercraft v1.2.5) was experiencing a TeaVM JavaScript runtime error in iframe environments:
-- **Error**: `Cannot read properties of undefined (reading '$jsException')`
-- **Fix Applied**: Added TeaVM polyfill for `$jsException` and `$rt_globals` functions before script loading
-- **Status**: Should now work in Replit's iframe preview environment
-
-**If the issue persists**:
-1. **Clear browser cache** and reload the page (Ctrl+Shift+R or Cmd+Shift+R)
-2. **Try deployed version**: Access from the published deployment URL instead of preview
-3. **Check browser console**: Look for any remaining JavaScript errors
-
-The polyfill code added ensures the TeaVM runtime has the necessary exception handling functions available before initialization.
-
-## Navigation
-
-### Main Pages (Home, Games, Settings)
-All main pages include a consistent navigation bar at the top:
-- **UN Logo** (top-left) - Clickable logo that returns to homepage
-- **Navigation buttons** (top-right):
-  - **Home** - Main landing page
-  - **Games** - Browse available games
-  - **Settings** - Configuration options
-
-### In-Game Navigation (Themed Dropdowns)
-When playing games, the top bar is removed for a clean gaming experience. Instead, a themed dropdown button appears in the top right corner when your mouse gets close to that area (proximity-activated). Clicking it reveals a dropdown menu featuring:
-- The UN logo (styled like the homepage)
-- "The Universe Network" title
-- Navigation links to Home, Games, and Settings
-
-**Theme Integration**: The dropdown automatically adapts to your selected theme:
-- **Two-tier CSS architecture**: Palette-level RGB variables (--palette-bg-1, --palette-text, etc.) are redefined per theme
-- **Functional variables**: All dropdown styles (backgrounds, borders, text, shadows, glows) use theme variables exclusively
-- **Theme persistence**: Your selected theme is saved to localStorage and automatically applied when you load any game
-- **No hardcoded colors**: Every aspect of the dropdown UI respects the active theme
-
-The button automatically fades in when your mouse moves near the top-right corner and fades out when you move away, keeping the game screen completely clean until you need navigation.
-
-**Games with themed dropdowns**: All 8 games (Cookie Clicker, 1v1.LOL, Crossy Road, Drive Mad, Flappy Bird, Super Mario 64, Minecraft, Slope) have consistent themed navigation.
-
-## Cookie Clicker
-- Original game: http://orteil.dashnet.org/cookieclicker/
-- GitHub mirror: https://github.com/ozh/cookieclicker
-- Accessible at `/games/cookie-clicker/`
-- Save games stored in localStorage
-- **All ads removed** (Google AdSense, Facebook Pixel, cookie consent, etc.)
-- Clean gaming experience with no tracking or advertisements
-- **Download System**: All game files including images are downloaded as part of the main game download process (no separate popup needed)
-
-## Crossy Road
-- Source: https://github.com/tw31122007/HTML-Games-V2
-- Accessible at `/games/crossyroad/`
-- Classic arcade-style road-crossing game with 3D graphics
-- Removed external tracking scripts for clean gameplay
-
-## Modifications for Replit
-The original game includes a domain check that prevents it from running in iframes (which Replit uses for previews). This check has been bypassed by commenting out the iframe detection code in `main.js` at line 16868:
-```javascript
-// Commented out: if (top!=self) Game.ErrorFrame();
-```
-This allows the game to run properly in the Replit environment while maintaining all original functionality.
-
-## File Size Optimization
-All games have been compressed to stay under 25MB:
-
-### Cookie Clicker (9MB - down from 14MB)
-- Removed non-English localization files (kept English only)
-- Optimized PNG images with optipng
-- Optimized JPEG images with jpegoptim (max quality 85%)
-- Removed global stylesheet to prevent UI conflicts
-
-### Slope (9.7MB - clean version)
-- Replaced with clean version from Bigfoot9999/Slope-Game (GitHub)
-- Removed all ads, tracking scripts, and rick roll content
-- Clean Unity WebGL build without bloat
-- Integrated with Universe Network navigation system
-
-### Minecraft/Eaglercraft (20MB - down from 22MB)
-- Removed source map file (classes.js.map) which isn't needed for production
-
-## Emulator (EmulatorJS)
-The Universe Network now includes a powerful retro game emulator powered by EmulatorJS. This feature allows users to play classic games from various gaming systems directly in their browser.
-
-### Features
-- **25+ Gaming Systems Supported**: Including NES, SNES, N64, Game Boy (GB/GBC/GBA), Nintendo DS, Sega (Genesis, Master System, Game Gear, CD, 32X, Saturn), PlayStation 1, Atari systems, and more
-- **Browser-Based**: Runs entirely in the browser using WebAssembly technology
-- **ROM File Upload**: Users can select and upload their own legally-owned ROM files
-- **Save States**: Game progress is saved locally in the browser
-- **Keyboard & Gamepad Support**: Default keyboard controls or connect your own gamepad
-- **Clean Interface**: Matches the Universe Network theme and design system
-
-### Supported Systems
-**Nintendo**: NES, SNES, N64, Game Boy, Game Boy Color, Game Boy Advance, Nintendo DS  
-**Sega**: Genesis/Mega Drive, Master System, Game Gear, Sega CD, 32X, Saturn  
-**Sony**: PlayStation 1  
-**Atari**: 2600, 5200, 7800, Lynx, Jaguar  
-**Other**: Arcade (MAME), 3DO, TurboGrafx-16/PC Engine, Neo Geo Pocket, MSX, Virtual Boy
-
-### Technical Details
-- Uses EmulatorJS CDN (stable version): `https://cdn.emulatorjs.org/stable/data/`
-- Based on RetroArch's libretro cores
-- All emulation happens client-side (no server processing required)
-- BIOS files may be required for some systems (PS1, Sega CD, Saturn)
-
-### Legal Notice
-Users should only upload ROM files they legally own. The Universe Network does not provide or distribute ROM files.
-
-## Browser (Scramjet Proxy)
-The Universe Network includes a web browser feature that uses Scramjet proxy technology to provide unrestricted web browsing.
-
-### Features
-- **Web Proxy**: Browse any website through the Scramjet proxy service
-- **Bypass Restrictions**: Access websites that may be blocked or restricted
-- **Smart URL Handling**: Automatically formats URLs and detects search queries
-- **Full-Screen Browsing**: Large iframe container for comfortable web browsing
-- **Search Integration**: Automatically redirects to Google search for queries without domain extensions
-- **Clean Interface**: Matches the Universe Network theme and design system
-
-### How It Works
-- Enter any URL (e.g., youtube.com, discord.com, reddit.com) in the search bar
-- The browser automatically adds https:// if not specified
-- Text without a domain extension is treated as a Google search query
-- Websites load through the Scramjet proxy instance at https://scramjet.mercurywork.shop
-- Supports major websites including YouTube, Discord, Reddit, Twitter, Instagram, Spotify, and more
-
-### Technical Details
-- Uses Scramjet proxy by MercuryWorkshop (https://github.com/MercuryWorkshop/scramjet)
-- Service Worker-based interception for transparent proxying
-- CAPTCHA support for major sites
-- No local backend required - uses hosted Scramjet instance
-- Accessible at `/browser/`
-
-### Supported Sites
-Scramjet supports most modern websites including:
-- **Video**: YouTube, Twitch, Vimeo
-- **Social Media**: Discord, Reddit, Twitter, Instagram
-- **Streaming**: Spotify, Netflix (limited)
-- **Gaming**: GeForce NOW, various web games
-- **General**: Most standard websites and web applications
-
-### Privacy & Security
-- All browsing goes through the Scramjet proxy service
-- No local logging or tracking
-- Session data is handled by the external Scramjet service
-- Users should be aware they're browsing through a third-party proxy
-
-## Theme System
-The site includes 5 customizable themes saved to localStorage:
-1. **Classic** (Default) - Pure black background with white text
-2. **Midnight Blue** - Deep blue tones with light blue text
-3. **Charcoal** - Dark gray background with light gray text
-4. **Pure White** - Inverted theme with white background and black text
-5. **Deep Space** - Dark blue-black with cyan blue highlights
-
-Themes persist across all pages (Home, Games, Emulator, Settings) using CSS variables and JavaScript.
+## External Dependencies
+- **Dropbox:** Used as the source for game asset downloads.
+- **EmulatorJS CDN:** `https://cdn.emulatorjs.org/stable/data/` for retro game emulation.
+- **Scramjet Proxy:** Integrated via MercuryWorkshop's hosted service at `https://scramjet.mercurywork.shop` for web browsing functionality.
+- **Google Fonts:** Used for typography (configured in CSP headers for EmulatorJS).
