@@ -7,44 +7,50 @@ import json
 import zipfile
 import shutil
 from urllib.parse import urlparse, parse_qs
+import http.client
 
 PORT = 5000
 DIRECTORY = "."
+BROWSER_PROXY_PORT = 3000
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
     
     def end_headers(self):
-        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        self.send_header('Pragma', 'no-cache')
-        self.send_header('Expires', '0')
-        
-        # Headers for EmulatorJS (enables SharedArrayBuffer)
-        # Using credentialless for better compatibility with iframes
-        self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
-        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
-        
-        # CSP headers to allow EmulatorJS and Ruffle CDN resources
-        csp_policy = (
-            "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emulatorjs.org https://unpkg.com; "
-            "worker-src 'self' blob:; "
-            "child-src 'self' blob:; "
-            "style-src 'self' 'unsafe-inline' https://cdn.emulatorjs.org https://fonts.googleapis.com; "
-            "img-src 'self' data: blob: https://cdn.emulatorjs.org; "
-            "font-src 'self' data: https://cdn.emulatorjs.org https://fonts.gstatic.com; "
-            "connect-src 'self' https://cdn.emulatorjs.org https://cdn.jsdelivr.net https://unpkg.com blob: data:; "
-            "media-src 'self' blob: data:; "
-            "object-src 'none';"
-        )
-        self.send_header('Content-Security-Policy', csp_policy)
+        # Skip security headers for Scramjet proxy paths - let Scramjet handle them
+        if not (self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')) or self.path == '/assets/scramjet.png'):
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+            
+            # Headers for EmulatorJS (enables SharedArrayBuffer)
+            # Using credentialless for better compatibility with iframes
+            self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
+            self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+            
+            # CSP headers to allow EmulatorJS and Ruffle CDN resources
+            csp_policy = (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emulatorjs.org https://unpkg.com; "
+                "worker-src 'self' blob:; "
+                "child-src 'self' blob:; "
+                "style-src 'self' 'unsafe-inline' https://cdn.emulatorjs.org https://fonts.googleapis.com; "
+                "img-src 'self' data: blob: https://cdn.emulatorjs.org; "
+                "font-src 'self' data: https://cdn.emulatorjs.org https://fonts.gstatic.com; "
+                "connect-src 'self' https://cdn.emulatorjs.org https://cdn.jsdelivr.net https://unpkg.com blob: data:; "
+                "media-src 'self' blob: data:; "
+                "object-src 'none';"
+            )
+            self.send_header('Content-Security-Policy', csp_policy)
         
         super().end_headers()
     
     def do_GET(self):
         if self.path == '/api/check-games':
             self.handle_check_games()
+        elif self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')) or self.path == '/assets/scramjet.png':
+            self.proxy_to_scramjet()
         else:
             # Default GET handler for static files
             return super().do_GET()
@@ -54,6 +60,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_download_games()
         elif self.path == '/api/ping':
             self.handle_ping()
+        elif self.path.startswith(('/browser', '/scram/', '/baremux/', '/epoxy/', '/libcurl/', '/baremod/', '/scramjet/', '/bare/')):
+            self.proxy_to_scramjet()
         else:
             self.send_error(404, "Endpoint not found")
     
@@ -103,6 +111,31 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(response_data).encode())
+    
+    def proxy_to_scramjet(self):
+        """Proxy requests to the Scramjet browser server"""
+        try:
+            # Only remove /browser prefix, keep all other paths as-is
+            if self.path.startswith('/browser'):
+                path = self.path.replace('/browser', '', 1) or '/'
+            else:
+                path = self.path
+            
+            conn = http.client.HTTPConnection('localhost', BROWSER_PROXY_PORT)
+            conn.request(self.command, path, headers=self.headers)
+            response = conn.getresponse()
+            
+            self.send_response(response.status)
+            for header, value in response.getheaders():
+                if header.lower() not in ['content-length', 'transfer-encoding', 'connection']:
+                    self.send_header(header, value)
+            self.end_headers()
+            
+            self.wfile.write(response.read())
+            conn.close()
+        except Exception as e:
+            print(f"Error proxying to Scramjet: {e}")
+            self.send_error(502, f"Browser proxy error: {str(e)}")
     
     def handle_download_games(self):
         """Download and extract games from Dropbox folder directly to games directory"""
