@@ -6,6 +6,7 @@
     <title>Emulator - The Universe Network</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="/assets/style.css">
+    <script src="/emulator/coi-serviceworker.js"></script>
     <style>
         .emulator-container {
             max-width: 1200px;
@@ -325,34 +326,23 @@
             const isSecureContext = window.isSecureContext;
             
             if (!hasSharedArrayBuffer) {
+                console.log('SharedArrayBuffer not available, showing loading message...');
                 const emptyState = document.getElementById('emptyState');
                 emptyState.innerHTML = `
-                    <div class="empty-state-icon">⚠️</div>
+                    <div class="empty-state-icon">🔄</div>
                     <div class="empty-state-text">
-                        <h2 style="color: var(--text-primary); font-size: 1.8rem; margin-bottom: 1rem;">Emulator Requires Deployment</h2>
-                        <p style="margin-bottom: 1rem;">The emulator requires special security headers (COEP/COOP) that don't work in Replit's preview environment.</p>
-                        <p style="margin-bottom: 1rem;"><strong>To use the emulator:</strong></p>
-                        <ul style="text-align: left; display: inline-block; margin: 0 auto; line-height: 2;">
-                            <li>Click the "Deploy" button in Replit to publish your site</li>
-                            <li>Or deploy to Render.com as a Web Service</li>
-                            <li>The emulator will work perfectly on the deployed site!</li>
-                        </ul>
+                        <h2 style="color: var(--text-primary); font-size: 1.8rem; margin-bottom: 1rem;">Setting up Emulator...</h2>
+                        <p style="margin-bottom: 1rem;">The emulator is installing required components.</p>
+                        <p style="margin-bottom: 1rem;">This page will reload automatically in a moment.</p>
                         <p style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.8;">
-                            Technical note: EmulatorJS requires SharedArrayBuffer support, which needs<br>
-                            Cross-Origin-Embedder-Policy and Cross-Origin-Opener-Policy headers.<br>
-                            These headers are configured but may not work in nested iframe environments.
+                            If the page doesn't reload automatically, please refresh manually.
                         </p>
                     </div>
                 `;
-                
-                const controls = document.querySelector('.controls-section');
-                if (controls) {
-                    controls.style.display = 'none';
-                }
-                
                 return false;
             }
             
+            console.log('SharedArrayBuffer available! Emulator ready.');
             return true;
         }
 

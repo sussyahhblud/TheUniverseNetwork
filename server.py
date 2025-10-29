@@ -25,7 +25,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
         self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
         
-        # Relaxed CSP headers to allow EmulatorJS, Ruffle, and other game resources
+        # Relaxed CSP headers to allow EmulatorJS, Ruffle, service workers, and other game resources
         csp_policy = (
             "default-src 'self' *; "
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "
@@ -36,7 +36,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             "font-src 'self' data: *; "
             "connect-src 'self' blob: data: *; "
             "media-src 'self' blob: data: *; "
-            "object-src 'none';"
+            "object-src 'none'; "
+            "frame-src 'self' blob: *;"
         )
         self.send_header('Content-Security-Policy', csp_policy)
         
