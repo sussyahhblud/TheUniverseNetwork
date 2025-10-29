@@ -7,50 +7,44 @@ import json
 import zipfile
 import shutil
 from urllib.parse import urlparse, parse_qs
-import http.client
 
 PORT = 5000
 DIRECTORY = "."
-BROWSER_PROXY_PORT = 3000
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
     
     def end_headers(self):
-        # Skip security headers for Rammerhead proxy paths - let Rammerhead handle them
-        if not self.path.startswith('/browser'):
-            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Expires', '0')
-            
-            # Headers for EmulatorJS (enables SharedArrayBuffer)
-            # Using credentialless for better compatibility with iframes
-            self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
-            self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
-            
-            # CSP headers to allow EmulatorJS and Ruffle CDN resources
-            csp_policy = (
-                "default-src 'self'; "
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.emulatorjs.org https://unpkg.com; "
-                "worker-src 'self' blob:; "
-                "child-src 'self' blob:; "
-                "style-src 'self' 'unsafe-inline' https://cdn.emulatorjs.org https://fonts.googleapis.com; "
-                "img-src 'self' data: blob: https://cdn.emulatorjs.org; "
-                "font-src 'self' data: https://cdn.emulatorjs.org https://fonts.gstatic.com; "
-                "connect-src 'self' https://cdn.emulatorjs.org https://cdn.jsdelivr.net https://unpkg.com blob: data:; "
-                "media-src 'self' blob: data:; "
-                "object-src 'none';"
-            )
-            self.send_header('Content-Security-Policy', csp_policy)
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        
+        # Headers for EmulatorJS (enables SharedArrayBuffer)
+        # Using credentialless for better compatibility with iframes
+        self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        
+        # Relaxed CSP headers to allow EmulatorJS, Ruffle, and other game resources
+        csp_policy = (
+            "default-src 'self' *; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "
+            "worker-src 'self' blob: *; "
+            "child-src 'self' blob: *; "
+            "style-src 'self' 'unsafe-inline' *; "
+            "img-src 'self' data: blob: *; "
+            "font-src 'self' data: *; "
+            "connect-src 'self' blob: data: *; "
+            "media-src 'self' blob: data: *; "
+            "object-src 'none';"
+        )
+        self.send_header('Content-Security-Policy', csp_policy)
         
         super().end_headers()
     
     def do_GET(self):
         if self.path == '/api/check-games':
             self.handle_check_games()
-        elif self.path.startswith('/browser'):
-            self.proxy_to_rammerhead()
         else:
             # Default GET handler for static files
             return super().do_GET()
@@ -60,8 +54,6 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.handle_download_games()
         elif self.path == '/api/ping':
             self.handle_ping()
-        elif self.path.startswith('/browser'):
-            self.proxy_to_rammerhead()
         else:
             self.send_error(404, "Endpoint not found")
     
@@ -111,53 +103,6 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(response_data).encode())
-    
-    def proxy_to_rammerhead(self):
-        """Proxy requests to the Rammerhead browser server"""
-        try:
-            # Remove /browser prefix to get the actual path
-            path = self.path.replace('/browser', '', 1) or '/'
-            
-            # Read request body if present
-            request_body = None
-            content_length = self.headers.get('Content-Length')
-            if content_length:
-                content_length = int(content_length)
-                if content_length > 0:
-                    request_body = self.rfile.read(content_length)
-            
-            # Prepare headers to forward
-            headers_to_forward = {}
-            for header, value in self.headers.items():
-                # Forward all headers except hop-by-hop headers
-                if header.lower() not in ['connection', 'proxy-connection', 'keep-alive', 
-                                          'proxy-authenticate', 'proxy-authorization', 
-                                          'te', 'trailer', 'transfer-encoding', 'upgrade']:
-                    headers_to_forward[header] = value
-            
-            # Ensure Host header is set correctly for localhost
-            headers_to_forward['Host'] = f'localhost:{BROWSER_PROXY_PORT}'
-            
-            # Make the proxied request
-            conn = http.client.HTTPConnection('localhost', BROWSER_PROXY_PORT)
-            conn.request(self.command, path, body=request_body, headers=headers_to_forward)
-            response = conn.getresponse()
-            
-            # Send response status
-            self.send_response(response.status)
-            
-            # Forward response headers
-            for header, value in response.getheaders():
-                if header.lower() not in ['transfer-encoding', 'connection']:
-                    self.send_header(header, value)
-            self.end_headers()
-            
-            # Stream response body
-            self.wfile.write(response.read())
-            conn.close()
-        except Exception as e:
-            print(f"Error proxying to Rammerhead: {e}")
-            self.send_error(502, f"Browser proxy error: {str(e)}")
     
     def handle_download_games(self):
         """Download and extract games from Dropbox folder directly to games directory"""

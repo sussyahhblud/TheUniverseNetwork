@@ -1,7 +1,7 @@
 # The Universe Network
 
 ## Overview
-The Universe Network is a static website serving as a gaming portal for multiple browser games. It features a dark-themed UI, clean navigation, and a smart download system for game assets. The project aims to provide an ad-free and distraction-free gaming experience with retro emulation and unrestricted web browsing capabilities.
+The Universe Network is a gaming portal featuring multiple browser games with a dark-themed UI, clean navigation, and a smart download system for game assets. The project provides an ad-free and distraction-free gaming experience with retro emulation capabilities.
 
 ## User Preferences
 - I prefer simple language.
@@ -12,14 +12,13 @@ The Universe Network is a static website serving as a gaming portal for multiple
 - Do not make changes to the file `Y`.
 
 ## Recent Updates
-- **October 28, 2025** (Latest): Rammerhead Browser Integration
-  - **Browser Replacement**: Replaced Scramjet proxy with Rammerhead from https://github.com/binary-person/rammerhead
-  - **Node.js Setup**: Installed Node.js 20 and npm dependencies (testcafe-hammerhead based)
-  - **Dual-Server Architecture**: Implemented proxy system where Python server (port 5000) forwards `/browser/` requests to Node.js Rammerhead server (port 3000)
-  - **Workflow Addition**: Created "Rammerhead Browser" workflow running `cd browser && node src/server.js`
-  - **Proxy Configuration**: Updated `server.py` to proxy `/browser` paths to Rammerhead, simplified from previous Scramjet implementation
-  - **Configuration Override**: Created `browser/config.js` to configure Rammerhead for Replit environment (port 3000, bind to 0.0.0.0, password: sharkie4life)
-  - **Fully Functional**: Rammerhead proxy interface loads with session management, URL proxying, and multi-worker support (8 workers)
+- **October 29, 2025** (Latest): Browser/Rammerhead Removal and CSP Fix
+  - **Browser Feature Removed**: Completely removed all browser proxy/Rammerhead functionality from the application
+  - **Server Cleanup**: Removed proxy code, browser endpoints, and http.client imports from server.py
+  - **CSP Headers Fixed**: Relaxed Content Security Policy to allow all necessary resources (EmulatorJS, Ruffle, game assets) without blocking
+  - **Navigation Updated**: Removed browser links from Plants vs Zombies dropdown menu to match site-wide navigation
+  - **Single Server Architecture**: Now running on Python-only server (no Node.js dependency)
+  - **Simplified Deployment**: Project ready for deployment with just `python3 server.py`
 
 - **October 28, 2025**: Replit Environment Setup
   - **GitHub Import**: Successfully imported project from GitHub to Replit
@@ -40,16 +39,15 @@ The Universe Network is a static website serving as a gaming portal for multiple
   - All new games integrate seamlessly with the existing theme system
 
 ## System Architecture
-The application uses a dual-server architecture:
+The application uses a simple single-server architecture:
 - **Main Server (Python 3.11)**: Serves the gaming portal and static files on port 5000 via `server.py`
-- **Browser Server (Node.js 20)**: Runs the Rammerhead web proxy on port 3000 via `browser/src/server.js`
-- **Proxy Integration**: Python server forwards `/browser/` requests to the Node.js Rammerhead server
+- **No External Dependencies**: Uses only Python standard library (http.server, socketserver, urllib, json, zipfile, shutil)
 
 The frontend uses a consistent black theme with customizable alternatives and a two-tier CSS architecture for styling.
 
 **UI/UX Decisions:**
 - **Theming System:** Five customizable themes (Classic, Midnight Blue, Charcoal, Pure White, Deep Space) persist across pages using CSS variables and JavaScript, saving preferences to `localStorage`.
-- **Navigation:** Consistent top navigation for main pages (Home, Games, Emulator, Browser, Settings). In-game, a proximity-activated, themed dropdown provides navigation without cluttering the game screen.
+- **Navigation:** Consistent top navigation for main pages (Home, Games, Emulator, Settings). In-game, a proximity-activated, themed dropdown provides navigation without cluttering the game screen.
 - **Game Icons:** Uses actual images for game icons instead of emojis.
 - **Download Popup:** Scrollable with enhanced logging and a UN logo.
 
@@ -58,35 +56,27 @@ The frontend uses a consistent black theme with customizable alternatives and a 
 - **Cache Control:** `Cache-Control` headers are configured to prevent caching issues.
 - **Dynamic Game Download System:** Games are downloaded on-demand via a backend API (`/api/download-games`) and extracted directly into the `games/` folder. A file-system based check (`/api/check-games`) determines if games are installed.
 - **EmulatorJS Integration:** The `/emulator/` page uses EmulatorJS (via CDN) for in-browser retro game emulation, supporting over 25 systems. It includes ROM file upload, save states, and gamepad support. `Cross-Origin-Embedder-Policy (COEP)` and `Cross-Origin-Opener-Policy (COOP)` headers are configured for `SharedArrayBuffer` support.
-- **Rammerhead Proxy Integration:** The `/browser/` page runs Rammerhead v1.2.64 with:
-    - Self-hosted Node.js server on port 3000 with load balancing (8 workers)
-    - Testcafe-hammerhead based proxy engine
-    - Session management system with localStorage and cookie syncing
-    - Password protection for creating sessions (password: "sharkie4life")
-    - Cross-domain port (3001) for isolated session handling
-    - File-based session caching with automatic cleanup
-    - Complete Rammerhead codebase from binary-person/rammerhead repository
-    - Fully functional website proxying without requiring Rust/WASM compilation
+- **Ruffle Flash Emulator:** Plants vs Zombies uses Ruffle Flash emulator with canvas rendering fallback for broad compatibility.
+- **Relaxed CSP Headers:** Content Security Policy configured to allow all necessary CDN resources (EmulatorJS, Ruffle, game assets) without blocking.
 - **Game Modifications:**
     - Cookie Clicker: Ad-free, tracking-free, and domain check bypassed for Replit iframe compatibility.
     - Crossy Road: Removed external tracking.
     - Slope: Replaced with a clean, ad-free version.
     - Minecraft/Eaglercraft: Includes a TeaVM polyfill to fix iframe runtime errors.
+    - Plants vs Zombies: Dropdown navigation menu matches site-wide navigation (no browser link).
 - **File Size Optimization:** Games are compressed by removing non-essential files (e.g., non-English localizations, source maps) and optimizing images.
 
 **System Design Choices:**
 - **Backend API:** Simple Python API for `/api/ping`, `/api/download-games`, and `/api/check-games`.
-- **Proxy Architecture**: HTTP proxy from Python to Node.js using `http.client.HTTPConnection` for Rammerhead paths
 - **Deployment:** Configured for Replit autoscale deployment (`python3 server.py`) and compatible with Render.com Web Service deployments.
 - **Error Handling:** Improved error messaging for static hosting and a dedicated deployment guide (`RENDER_DEPLOYMENT_GUIDE.md`).
-- **Dependencies**: Python uses built-in stdlib only; Node.js uses npm packages for Rammerhead (lockfile: `browser/package-lock.json`)
+- **Dependencies**: Python uses built-in stdlib only - no external packages required!
 
 ## External Dependencies
 - **Dropbox:** Used as the source for game asset downloads.
 - **EmulatorJS CDN:** `https://cdn.emulatorjs.org/stable/data/` for retro game emulation.
-- **Rammerhead Proxy:** Self-hosted from `browser/` directory (cloned from https://github.com/binary-person/rammerhead), runs on Node.js with testcafe-hammerhead.
-- **Google Fonts:** Used for typography (configured in CSP headers for EmulatorJS).
+- **Ruffle CDN:** `https://unpkg.com/@ruffle-rs/ruffle` for Flash game emulation.
+- **Google Fonts:** Used for typography (configured in CSP headers).
 
 ## Workflows
-1. **Server** (Main): `python3 server.py` on port 5000 - serves the main website and proxies browser requests
-2. **Rammerhead Browser**: `cd browser && node src/server.js` on port 3000 - runs the Rammerhead proxy server with 8 workers
+1. **Server**: `python3 server.py` on port 5000 - serves the entire application
