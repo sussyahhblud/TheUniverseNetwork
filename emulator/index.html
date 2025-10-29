@@ -544,29 +544,6 @@
                                 }
                             }
 
-                            // Continuously ensure elements stay hidden in fullscreen
-                            function enforceFullscreenHiding() {
-                                if (maintainFullscreen) {
-                                    document.documentElement.classList.add('fullscreen-active');
-                                    document.body.classList.add('fullscreen-active');
-                                }
-                            }
-
-                            // Run enforcement every 100ms while in fullscreen
-                            setInterval(enforceFullscreenHiding, 100);
-
-                            // Monitor for page/content changes in the emulator
-                            const observer = new MutationObserver(function(mutations) {
-                                if (maintainFullscreen && !document.fullscreenElement && 
-                                    !document.webkitFullscreenElement && !document.mozFullScreenElement) {
-                                    setTimeout(function() {
-                                        if (maintainFullscreen) {
-                                            enterFullscreen();
-                                        }
-                                    }, 100);
-                                }
-                            });
-
                             // Observe the main emulator area for changes
                             const mainArea = document.getElementById('mainarea');
                             if (mainArea) {
