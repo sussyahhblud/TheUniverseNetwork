@@ -12,7 +12,26 @@ The Universe Network is a gaming portal featuring multiple browser games with a 
 - Do not make changes to the file `Y`.
 
 ## Recent Updates
-- **October 29, 2025** (Latest): EmulatorJS Integration with Replit Preview Support
+- **October 29, 2025** (Latest): Emulator Replacement - Migrated from EmulatorJS to webretro
+  - **webretro Integration**: Completely replaced EmulatorJS with webretro (RetroArch ported to WebAssembly)
+  - **19+ Emulator Cores**: webretro v6.5 provides support for NES, SNES, Genesis, GBA, N64, PlayStation, and 14+ other systems
+  - **Pre-compiled & CDN-based**: All cores load from cdn.jsdelivr.net (no build process required)
+  - **Full Feature Set**: ROM upload, save states, SRAM saves, gamepad support, screenshot manager, cheats, and shaders
+  - **CSP Improvements**: Updated Content Security Policy from blanket wildcards to domain-scoped allowlists (cdn.jsdelivr.net, Firebase/Google domains for games, Ruffle CDN)
+  - **COEP/COOP Headers**: Cross-Origin-Embedder-Policy and Cross-Origin-Opener-Policy correctly configured for SharedArrayBuffer support
+  - **Verified Working**: Tested with N64 (mupen64plus_next) core - games loading successfully without errors or black screens
+  - **Documentation**: Added CSP comments documenting required domains for webretro, Firebase-enabled games, and Ruffle
+
+- **October 29, 2025**: GitHub Import to Fresh Replit Environment
+  - **Fresh Setup**: Successfully imported project from GitHub to a new Replit environment
+  - **Python 3.11 Installation**: Installed Python 3.11 toolchain for running the server
+  - **Workflow Configuration**: Set up "Server" workflow to run `python3 server.py` on port 5000 with webview output
+  - **Deployment Configuration**: Configured autoscale deployment with `python3 server.py` as the run command
+  - **Git Ignore**: Created `.gitignore` file with Python, Replit, IDE, and OS-specific exclusions
+  - **Verification**: All pages (home, games, emulator, settings) and API endpoints verified working
+  - Project is fully functional and ready to use in the Replit environment
+
+- **October 29, 2025** (Replaced): EmulatorJS Integration with Replit Preview Support [REPLACED BY WEBRETRO]
   - **Service Worker Integration**: Implemented COI (Cross-Origin Isolation) service worker to enable SharedArrayBuffer in Replit's preview iframe environment
   - **EmulatorJS CDN Integration**: Configured to use official EmulatorJS CDN for optimal performance and compatibility
   - **EmulatorJS v4.0+**: Using latest stable version with full WebAssembly support for 25+ gaming systems
@@ -65,9 +84,9 @@ The frontend uses a consistent black theme with customizable alternatives and a 
 - **Static File Serving:** Python's built-in HTTP server serves all static files from the current directory on `0.0.0.0:5000`.
 - **Cache Control:** `Cache-Control` headers are configured to prevent caching issues.
 - **Dynamic Game Download System:** Games are downloaded on-demand via a backend API (`/api/download-games`) and extracted directly into the `games/` folder. A file-system based check (`/api/check-games`) determines if games are installed.
-- **EmulatorJS Integration:** The `/emulator/` page uses EmulatorJS (via CDN) for in-browser retro game emulation, supporting over 25 systems. It includes ROM file upload, save states, and gamepad support. `Cross-Origin-Embedder-Policy (COEP)` and `Cross-Origin-Opener-Policy (COOP)` headers are configured for `SharedArrayBuffer` support.
+- **webretro Integration:** The `/emulator/` page uses webretro v6.5 (RetroArch ported to WebAssembly) for in-browser retro game emulation, supporting 19+ systems including NES, SNES, Genesis, GBA, N64, and PlayStation. Cores are loaded from `cdn.jsdelivr.net`. Includes ROM file upload, save states, SRAM saves, gamepad support, screenshot manager, cheats, and shaders. `Cross-Origin-Embedder-Policy (COEP)` and `Cross-Origin-Opener-Policy (COOP)` headers are configured for `SharedArrayBuffer` support.
 - **Ruffle Flash Emulator:** Plants vs Zombies uses Ruffle Flash emulator with canvas rendering fallback for broad compatibility.
-- **Relaxed CSP Headers:** Content Security Policy configured to allow all necessary CDN resources (EmulatorJS, Ruffle, game assets) without blocking.
+- **Improved CSP Headers:** Content Security Policy configured with domain-scoped allowlists (cdn.jsdelivr.net for webretro/Ruffle, Firebase/Google domains for game services, Google Fonts) to balance security with functionality.
 - **Game Modifications:**
     - Cookie Clicker: Ad-free, tracking-free, and domain check bypassed for Replit iframe compatibility.
     - Crossy Road: Removed external tracking.
@@ -84,8 +103,9 @@ The frontend uses a consistent black theme with customizable alternatives and a 
 
 ## External Dependencies
 - **Dropbox:** Used as the source for game asset downloads.
-- **EmulatorJS CDN:** `https://cdn.emulatorjs.org/stable/data/` for retro game emulation.
+- **webretro CDN:** `https://cdn.jsdelivr.net/gh/BinBashBanana/webretro/` for retro game emulation cores and assets.
 - **Ruffle CDN:** `https://unpkg.com/@ruffle-rs/ruffle` for Flash game emulation.
+- **Firebase/Google Services:** Used by some games (e.g., 1v1lol) for authentication, database, and analytics.
 - **Google Fonts:** Used for typography (configured in CSP headers).
 
 ## Workflows

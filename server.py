@@ -20,24 +20,31 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
         
-        # Headers for EmulatorJS (enables SharedArrayBuffer)
+        # Headers for webretro (enables SharedArrayBuffer)
         # Using credentialless for better compatibility with iframes
         self.send_header('Cross-Origin-Embedder-Policy', 'credentialless')
         self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
         
-        # Relaxed CSP headers to allow EmulatorJS, Ruffle, service workers, and other game resources
+        # CSP headers to allow webretro, Ruffle, service workers, and game resources
+        # Whitelisted domains:
+        #   cdn.jsdelivr.net - webretro cores, Ruffle emulator
+        #   unpkg.com - Ruffle emulator
+        #   *.googleapis.com - Firebase, Google services, imasdk for games
+        #   *.firebaseio.com - Firebase realtime database for games
+        #   *.google.com - Firebase auth
+        #   fonts.googleapis.com/gstatic.com - Google Fonts
         csp_policy = (
-            "default-src 'self' *; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' *; "
-            "worker-src 'self' blob: *; "
-            "child-src 'self' blob: *; "
-            "style-src 'self' 'unsafe-inline' *; "
-            "img-src 'self' data: blob: *; "
-            "font-src 'self' data: *; "
-            "connect-src 'self' blob: data: *; "
-            "media-src 'self' blob: data: *; "
+            "default-src 'self' cdn.jsdelivr.net unpkg.com https://*.googleapis.com https://*.google.com; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net unpkg.com https://*.googleapis.com https://*.gstatic.com; "
+            "worker-src 'self' blob: cdn.jsdelivr.net; "
+            "child-src 'self' blob:; "
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com fonts.googleapis.com; "
+            "img-src 'self' data: blob: cdn.jsdelivr.net https://*.googleapis.com; "
+            "font-src 'self' data: cdn.jsdelivr.net fonts.gstatic.com; "
+            "connect-src 'self' blob: data: cdn.jsdelivr.net https://*.googleapis.com https://*.firebaseio.com https://*.google.com; "
+            "media-src 'self' blob: data:; "
             "object-src 'none'; "
-            "frame-src 'self' blob: *;"
+            "frame-src 'self' blob: https://*.google.com;"
         )
         self.send_header('Content-Security-Policy', csp_policy)
         
