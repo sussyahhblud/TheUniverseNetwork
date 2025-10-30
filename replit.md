@@ -12,7 +12,16 @@ The Universe Network is a gaming portal featuring multiple browser games with a 
 - Do not make changes to the file `Y`.
 
 ## Recent Updates
-- **October 29, 2025** (Latest): Emulator Replacement - Migrated from EmulatorJS to webretro
+- **October 30, 2025** (Latest): In-Game Dropdown Navigation Menu Added
+  - **Temple Run Integration**: Created missing index.html file for Temple Run with BabylonJS support and proximity-activated dropdown menu
+  - **Dropdown Menu System**: Added proximity-activated navigation dropdowns to Cut the Rope, Cut the Rope 2, Temple Run, and 2048
+  - **Consistent Design**: All dropdown menus use the existing CSS theming system with variables for automatic theme support
+  - **User Experience**: Dropdowns appear when hovering near the top-right corner (150px × 150px detection area) to avoid cluttering game screens
+  - **Interactive Features**: Click-to-toggle functionality, click-outside-to-close behavior, and theme persistence via localStorage
+  - **Navigation Links**: Each dropdown provides access to Home, Games, and Settings pages with the UN logo and site title
+  - **Implementation Details**: JavaScript handles visibility toggling, hover area detection, menu state management, and smooth transitions
+
+- **October 29, 2025**: Emulator Replacement - Migrated from EmulatorJS to webretro
   - **webretro Integration**: Completely replaced EmulatorJS with webretro (RetroArch ported to WebAssembly)
   - **19+ Emulator Cores**: webretro v6.5 provides support for NES, SNES, Genesis, GBA, N64, PlayStation, and 14+ other systems
   - **Pre-compiled & CDN-based**: All cores load from cdn.jsdelivr.net (no build process required)
