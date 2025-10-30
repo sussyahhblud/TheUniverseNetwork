@@ -75,7 +75,10 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             'flappy-bird',
             'minecraft',
             'slope',
-            'super-mario-64'
+            'super-mario-64',
+            '2048',
+            'cuttherope',
+            'cuttherope2'
         ]
         
         games_dir = os.path.join(DIRECTORY, 'games')
