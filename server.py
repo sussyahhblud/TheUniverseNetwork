@@ -78,7 +78,8 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             'super-mario-64',
             '2048',
             'cuttherope',
-            'cuttherope2'
+            'cuttherope2',
+            'templerun'
         ]
         
         games_dir = os.path.join(DIRECTORY, 'games')
