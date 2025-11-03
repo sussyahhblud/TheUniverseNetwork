@@ -1,8 +1,0 @@
-shaders = 1
-
-shader0 = shaders/img_mod_CyberLab_Lite.slang
-scale_type0 = source
-
-textures = "SamplerLUT1;SamplerLUT2"
-SamplerLUT1 = ../reshade/shaders/LUT/16.png
-SamplerLUT2 = ../reshade/shaders/LUT/16.png
